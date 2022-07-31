@@ -37,7 +37,6 @@
                     cellNum = +cellStr.replace(/\D/g, '');
                 if (current.date < 7) {
                     if (cellNum == current.date) {
-                        console.log(cellNum);
                         allCells[i].classList.add('calendar-table__cell_today');
                         break;
                     }
@@ -384,11 +383,12 @@
             let inputData = {
                 dayEvent: dayInputEvent.value,
                 dayDate: dayInputDate.value,
-                dayNames: dayInputNames.value,
-                dayInput: dayInputDescr.value
-            };
+                dayName: dayInputNames.value,
+                dayInput: dayInputDescr.value,
+                },
+                inputDataStr = `${inputData.dayEvent}:${inputData.dayDate}:${inputData.dayNames}:${inputData.dayInput}`;
 
-            let inputDataJSON =JSON.stringify(inputData);
+            let inputDataJSON =JSON.stringify(inputDataStr);
 
             localStorage.setItem(`event ${num}`, inputDataJSON);
 
