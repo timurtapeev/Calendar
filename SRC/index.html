@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="CSS/style.css">
+    <title>Calendar</title>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header__content-wrapper">
+                <div class="header__btns-wrapper">
+                    <button class="header__button">Добавить</button>
+                    <button class="header__button">Обновить</button>
+                </div>
+                <div class="header__input-wrapper">
+                    <img class="header__img-search" src="icons/Vector.svg" alt="search">
+                    <input class="header__input" type="text" placeholder="Событие, дата или участник">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="calendar">
+        <div class="container">
+            <div class="calendar-header__wrapper">
+                <div class="calendar-header__date">
+                    <button class="calendar-header__button" data-prev><img src="icons/prev.svg" alt="prev"></button>
+                    <p data-text>Январь 2022</p>
+                    <button class="calendar-header__button" data-next><img src="icons/next.svg" alt="next"></button>
+                </div>
+                <button class="calendar-header__button-today">Сегодня</button>
+            </div>
+            <div class="calendar-table__wrapper">
+
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="modal-day__form hide" >
+            <div class="modal-day__wrapper">
+                <form action="#">
+                    <div class="modal-day__close">
+                        <img data-close src="icons/close.svg" alt="">
+                    </div>
+                    <div class="modal-day__input_required">
+                        <input class="modal-day__input" name="event" data-dayInputEvent required placeholder="Событие" type="text">
+                        <input class="modal-day__input" name="date" data-dayInputDate required placeholder="День, месяц, год" type="date">
+                        <input class="modal-day__input" name="names" data-dayInputNames placeholder="Имена участников" type="text">
+                    </div>
+                    <input class="modal-day__input modal-day__input_descr" name="descr" data-dayInputDescr placeholder="Описание" type="text">
+                    <div class="modal-day__btns-wrapper">
+                        <button class="modal-day__button" data-submite>Готово</button>
+                        <button class="modal-day__button">Удалить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

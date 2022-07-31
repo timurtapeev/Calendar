@@ -1,0 +1,51 @@
+.calendar-table
+    &__wrapper
+        display: flex
+        flex-direction: column
+        justify-content: center
+        flex-wrap: wrap
+        align-items: flex-start
+        margin-bottom: 50px
+    &__row 
+        display: flex
+        flex-direction: row
+        &_border
+            border-bottom: 1px solid #292929
+    &__row :first-child
+        border-width: 1px 1px 0px 1px     
+    &__cell
+        padding: 8px
+        gap: 8px
+        width: 143px
+        height: 120px
+        background: #FFFFFF
+        border: 0px solid #292929
+        border-width: 1px 1px 0px 0px
+        &_active
+            box-shadow: 0px 0px 10px 2px #0271C7
+        &_event
+            background-color: #C2E4FE
+        &_hover
+            background: #27A1FF
+        &_today
+            background-color: #F4F4F4
+    &__header
+        width: 100%
+        font-weight: 400
+        font-size: 14px
+        line-height: 16px
+        color: #6B6B6B
+        margin-bottom: 8px
+    &__title
+        width: 100%
+        margin-bottom: 8px
+        font-weight: 400
+        font-size: 14px
+        line-height: 16px
+        color: #292929
+    &__descr
+        width: 100%
+        font-weight: 400
+        font-size: 14px
+        line-height: 16px
+        color: #6B6B6B
