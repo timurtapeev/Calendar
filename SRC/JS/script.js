@@ -331,7 +331,7 @@
                 
                 postData(modalDayForm, eventNumber, modalDayTrigger);
                 
-                getData('.calendar-table__row');
+                // getData('.calendar-table__row');
             });
         });
     }
@@ -402,34 +402,34 @@
         });
     }
 
-    function getData(selector) {
-        for (let i = 1; i < 100; i++){
-            let outputData = JSON.parse(localStorage.getItem(`event ${i}`));
+    // function getData(selector) {
+    //     for (let i = 1; i < 100; i++){
+    //         let outputData = JSON.parse(localStorage.getItem(`event ${i}`));
             
-            let targetDate = outputData.dayDate,
-                targetDayHeader = document.querySelectorAll('.calendar-table__header');
+    //         let targetDate = outputData.dayDate,
+    //             targetDayHeader = document.querySelectorAll('.calendar-table__header');
 
-            targetDate = targetDate + '';
+    //         targetDate = targetDate + '';
 
-            let targetDay = +outputData.dayDate.slice(8),
-                targetMonth = +outputData.dayDate.slice(5,7),
-                targetYear = +outputData.dayDate.slice(0, 4);
+    //         let targetDay = +outputData.dayDate.slice(8),
+    //             targetMonth = +outputData.dayDate.slice(5,7),
+    //             targetYear = +outputData.dayDate.slice(0, 4);
 
-            if (showedYear == targetYear && showedMonth + 1 == targetMonth) {
-                targetDayHeader.forEach((e, index) => {
-                    if (index < 7) {
-                        for (let i = 0; i < 7; i ++) {
-                            let cellStr = e[i].innerText,
-                                cellNum = +cellStr.replace(/\D/g, '');
-                        }
-                    }
-                });
-            }       
-            if (outputData) {
-                break;
-            }
-        }
-    }
-    getData('.calendar-table__row');
+    //         if (showedYear == targetYear && showedMonth + 1 == targetMonth) {
+    //             targetDayHeader.forEach((e, index) => {
+    //                 if (index < 7) {
+    //                     for (let i = 0; i < 7; i ++) {
+    //                         let cellStr = e[i].innerText,
+    //                             cellNum = +cellStr.replace(/\D/g, '');
+    //                     }
+    //                 }
+    //             });
+    //         }       
+    //         if (outputData) {
+    //             break;
+    //         }
+    //     }
+    // }
+    // getData('.calendar-table__row');
 
 }('.calendar'));
