@@ -500,7 +500,7 @@
 
     // showModalQuickForm
     
-    const modalQuickTrigger = document.querySelector('[data-addEvent]');
+    const modalQuickTrigger = document.querySelector('[data-add-event]');
     
     modalQuickTrigger.addEventListener('click', (e) => {
         let targetX = e.target.getBoundingClientRect().x,
@@ -545,4 +545,5 @@
         modalQuickForm.classList.remove('show');
         modalQuickForm.classList.add('hide');
     }
+
 }('.calendar'));
