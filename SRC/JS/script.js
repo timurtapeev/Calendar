@@ -534,10 +534,6 @@
                      }
                 } 
             closeModalQuickForm();
-            // let inputData = {
-            //     dayEvent: quickEventName,
-            //     dayDate: quickDate,
-            //     };
         });
     });
 
@@ -549,7 +545,4 @@
         modalQuickForm.classList.remove('show');
         modalQuickForm.classList.add('hide');
     }
-
 }('.calendar'));
-
-// 30.08.2022 Др
