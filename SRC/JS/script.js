@@ -251,6 +251,8 @@
         initCalendar(showedYear, showedMonth, current, calendar);
 
         closeModalDayForm();
+        closeModalQuickForm();
+        getData();
     });
 
     next.addEventListener('click', () => {
@@ -260,6 +262,8 @@
         initCalendar(showedYear, showedMonth, current, calendar);
 
         closeModalDayForm();
+        closeModalQuickForm();
+        getData();
     });
 
     todayButton.addEventListener('click', () => {
@@ -269,6 +273,8 @@
         initCalendar(showedYear, showedMonth, current, calendar);
 
         closeModalDayForm();
+        closeModalQuickForm();
+        getData();
     });
 
     function getPrevYear(year, month) {
@@ -465,7 +471,7 @@
                     } else if (i <= lastDateOfMonth) {
                         showEventDay(i, targetDayHeader, targetDay, allCells, targetEvent, targetName);
                     }
-                }               
+                }
             } 
             if (localStorage.length > i) {
                 break;
@@ -475,6 +481,10 @@
     getData();
 
     function showEventDay(num, targetDayHeader, targetDay, allCells, targetEvent, targetName) {
+        if (!targetName) {
+            targetName = '';
+        }
+       
         let cellStr = targetDayHeader[num].innerText,
             cellNum = +cellStr.replace(/\D/g, '');
         if (targetDay == cellNum) {
@@ -503,7 +513,31 @@
         modalQuickForm.style.top = `${targetY + 26}px`;
         modalQuickForm.style.left = `${targetX}px`;
         
-        
+        modalQuickForm.addEventListener('submit', () => {
+            let targetDayHeader = document.querySelectorAll('.calendar-table__header'),
+                lastDateOfMonth = getLastDayOfMonth(showedYear, showedMonth),
+                allCells = document.querySelectorAll('.calendar-table__cell');
+            let quickInfo = '' + quickInput.value,
+                quickDate = +quickInfo.slice(0,2),
+                quickMonth = +quickInfo.slice(3,5),
+                quickYear = +quickInfo.slice(6,10),
+                quickEventName = quickInfo.slice(11);
+
+                if (showedYear == quickYear && showedMonth + 1 == quickMonth) {
+                    for (let i = 0; i < targetDayHeader.length; i++) {
+                        if (i < 7 && i <= lastDateOfMonth) {
+                            showEventDay(i, targetDayHeader, quickDate, allCells, quickEventName);
+                        } else if (i <= lastDateOfMonth) {
+                            showEventDay(i, targetDayHeader, quickDate, allCells, quickEventName);
+                        }
+                     }
+                } 
+            closeModalQuickForm();
+            // let inputData = {
+            //     dayEvent: quickEventName,
+            //     dayDate: quickDate,
+            //     };
+        });
     });
 
     modalQuickCloseBtn.addEventListener('click', () => {
@@ -516,3 +550,5 @@
     }
 
 }('.calendar'));
+
+// 30.08.2022 Др
