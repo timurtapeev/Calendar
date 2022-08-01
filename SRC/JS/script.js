@@ -309,9 +309,9 @@
         const modalDayTrigger = document.querySelectorAll('.calendar-table__cell');
 
         modalDayTrigger.forEach(element => {
-            element.addEventListener('click', (elem) => {
-                let targetX = elem.target.getBoundingClientRect().x,
-                    targetY = elem.target.getBoundingClientRect().y;
+            element.addEventListener('click', (event) => {
+                let targetX = event.target.getBoundingClientRect().x,
+                    targetY = event.target.getBoundingClientRect().y;
                 
                 modalDayForm.classList.add('show');
                 modalDayForm.classList.remove('hide');
@@ -320,7 +320,7 @@
                 modalDayForm.style.left = `${targetX + 143}px`;
 
                 modalDayTrigger.forEach(e => {
-                    if (elem.target !== e.target || modalDayForm.classList.contains('hide')) {
+                    if (event.target !== e.target || modalDayForm.classList.contains('hide')) {
                         e.classList.remove('calendar-table__cell_active');
 
                         modalDayCloseBtn.addEventListener('click', () => {
@@ -329,9 +329,28 @@
                         });
                     }
                 });
-                resetActiveClassCell(modalDayTrigger, elem);
+
+                let targetDate = event.target.innerText;
+                let cellNum = +targetDate.replace(/\D/g, '');
                 
-                postData(modalDayForm, modalDayTrigger);
+                if (cellNum < 10) {
+                    cellNum = `0${cellNum}`;
+                }
+
+                const inputDate = document.querySelector('[data-dayInputDate]');
+
+                let targetMonth = showedMonth;
+
+                if (showedMonth < 10) {
+                    targetMonth = `0${showedMonth + 1}`;
+                } else {
+                    targetMonth = showedMonth + 1;
+                }
+                inputDate.value = `${cellNum}.${targetMonth}.${showedYear}`;
+                
+                resetActiveClassCell(modalDayTrigger, event);
+                
+                postData(modalDayForm);
                 
                 // getData('.calendar-table__row');
             });
@@ -373,8 +392,9 @@
 
     //localStorage
 
-    function postData(form, selector) {
-        const dayInputEvent = document.querySelector('[data-dayInputEvent]'),
+    function postData(form) {
+        const modalDayTrigger = document.querySelectorAll('.calendar-table__cell'),
+              dayInputEvent = document.querySelector('[data-dayInputEvent]'),
               dayInputDate = document.querySelector('[data-dayInputDate]'),
               dayInputNames = document.querySelector('[data-dayInputNames]'),
               dayInputDescr = document.querySelector('[data-dayInputDescr]');
@@ -410,12 +430,10 @@
             localStorage.setItem(eventDayNumber,(localStorage.getItem(`event ${eventNumber-1}`) || '') + targetDay);
 
             // localStorage.setItem(`event ${eventNumber}`, JSON.stringify(targetDay));
-
-            closeModalDayForm();
-            
-            selector.forEach((e) =>{
+            modalDayTrigger.forEach((e) =>{
                 e.classList.remove('calendar-table__cell_active');
             });
+            closeModalDayForm();
             getData();
         });
     }
@@ -436,9 +454,9 @@
 
             targetDate = targetDate + '';
 
-            let targetDay = +targetDate.slice(8),
-                targetMonth = +targetDate.slice(5,7),
-                targetYear = +targetDate.slice(0, 4);
+            let targetDay = +targetDate.slice(0,2),
+                targetMonth = +targetDate.slice(3,5),
+                targetYear = +targetDate.slice(6);
 
             if (showedYear == targetYear && showedMonth + 1 == targetMonth) {
                for (let i = 0; i < targetDayHeader.length; i++) {
@@ -477,34 +495,20 @@
     modalQuickTrigger.addEventListener('click', (e) => {
         let targetX = e.target.getBoundingClientRect().x,
             targetY = e.target.getBoundingClientRect().y;
+        const quickInput = document.querySelector('[data-quickInputEvent]');
         
         modalQuickForm.classList.add('show');
         modalQuickForm.classList.remove('hide');
 
         modalQuickForm.style.top = `${targetY + 26}px`;
         modalQuickForm.style.left = `${targetX}px`;
-
-        modalQuickCloseBtn.addEventListener('click', () => {
-            closeModalQuickForm();
-        });
-
-        // modalTrigger.forEach(e => {
-        //     if (elem.target !== e.target || modalQuickForm.classList.contains('hide')) {
-        //         e.classList.remove('calendar-table__cell_active');
-
-        //         modalDayCloseBtn.addEventListener('click', () => {
-        //             closeModalDayForm();
-        //             e.classList.remove('calendar-table__cell_active');
-        //         });
-        //     }
-        // });
-        // resetActiveClassCell(modalTrigger, elem);
         
-        // postData(modalDayForm, modalTrigger);
         
-        // getData('.calendar-table__row');
     });
-    
+
+    modalQuickCloseBtn.addEventListener('click', () => {
+        closeModalQuickForm();
+    });
 
     function closeModalQuickForm() {
         modalQuickForm.classList.remove('show');
