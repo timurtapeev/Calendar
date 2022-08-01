@@ -35,16 +35,14 @@
             for (let i = 0; i < 7; i++) {
                 let cellStr = allCells[i].innerText,
                     cellNum = +cellStr.replace(/\D/g, '');
-                if (current.date < 7) {
-                    if (cellNum == current.date) {
-                        allCells[i].classList.add('calendar-table__cell_today');
-                        break;
-                    }
+                if (current.date < 7 && cellNum == current.date ) {
+                    allCells[i].classList.add('calendar-table__cell_today');
+                    break;
                 }
             }
 
             for (let i = 7; i < allCells.length; i++) {
-                if (allCells[i].innerText == current.date) {
+                if (allCells[i].innerText == current.date && i <= showedMonth) {
                     allCells[i].classList.add('calendar-table__cell_today');
                     break;
                 }
@@ -76,6 +74,10 @@
         for (let i = 0; i < arr.length; i++) {
             let tableRow = document.createElement('div');
             tableRow.classList.add('calendar-table__row');
+
+            if (i === 0) {
+                tableRow.classList.add('today_row');
+            }
 
             if (i === 0) {
                 for (let j = 0; j < arr[i].length; j++) {
