@@ -7,7 +7,9 @@
     const days = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'],
           calendar = document.querySelector(selector),
           modalDayForm = document.querySelector('.modal-day__form'),
-          modalDayCloseBtn = document.querySelector('[data-close]');
+          modalDayCloseBtn = document.querySelector('[data-close]'),
+          modalQuickForm = document.querySelector('.modal-quick__form'),
+          modalQuickCloseBtn = document.querySelector('[data-quickClose]');
 
     let date = new Date(),
         showedYear = date.getFullYear(),
@@ -328,10 +330,8 @@
                     }
                 });
                 resetActiveClassCell(modalDayTrigger, elem);
-
-                let eventNumber = 1;
                 
-                postData(modalDayForm, eventNumber, modalDayTrigger);
+                postData(modalDayForm, modalDayTrigger);
                 
                 // getData('.calendar-table__row');
             });
@@ -373,65 +373,142 @@
 
     //localStorage
 
-    function postData(form, num, selector) {
+    function postData(form, selector) {
         const dayInputEvent = document.querySelector('[data-dayInputEvent]'),
               dayInputDate = document.querySelector('[data-dayInputDate]'),
               dayInputNames = document.querySelector('[data-dayInputNames]'),
               dayInputDescr = document.querySelector('[data-dayInputDescr]');
 
+        let eventNumber = 0;
+
         form.addEventListener('submit', (e) => {
             e.preventDefault();
+            
+            // if (localStorage.length == 0) {
+            //     eventNumber = 0;
+            // } else {
+            //     eventNumber = +localStorage.eventNumber;
+            // }
+            // console.log(eventNumber);
+            eventNumber++;
 
-            let inputData = {
-                dayEvent: dayInputEvent.value,
-                dayDate: dayInputDate.value,
-                dayName: dayInputNames.value,
-                dayInput: dayInputDescr.value,
-                },
-                inputDataStr = `${inputData.dayEvent}:${inputData.dayDate}:${inputData.dayNames}:${inputData.dayInput}`;
+            let event = dayInputEvent.value,
+                date = dayInputDate.value,
+                name = dayInputNames.value,
+                descr = dayInputDescr.value;
 
-            let inputDataJSON =JSON.stringify(inputDataStr);
+            let inputData = function(event, date, name, descr) {
+                this.dayEvent = event;
+                this.dayDate = date;
+                this.dayName = name;
+                this.dayDescr = descr;
+                };
+            
+            let targetDay = JSON.stringify(new inputData(event, date, name, descr)),
+                eventDayNumber = `event ${eventNumber}`;
 
-            localStorage.setItem(`event ${num}`, inputDataJSON);
+            localStorage.setItem(eventDayNumber,(localStorage.getItem(`event ${eventNumber-1}`) || '') + targetDay);
 
-            num++;
+            // localStorage.setItem(`event ${eventNumber}`, JSON.stringify(targetDay));
 
             closeModalDayForm();
             
             selector.forEach((e) =>{
                 e.classList.remove('calendar-table__cell_active');
             });
+            getData();
         });
     }
 
-    // function getData(selector) {
-    //     for (let i = 1; i < 100; i++){
-    //         let outputData = JSON.parse(localStorage.getItem(`event ${i}`));
+    function getData(selector) {
+        for (let i = 1; i < 100; i++){
+            let eventDate = JSON.parse(localStorage.getItem(`event ${i}`));
+            console.log(eventDate);
             
-    //         let targetDate = outputData.dayDate,
-    //             targetDayHeader = document.querySelectorAll('.calendar-table__header');
+            let targetDate = eventDate.dayDate,
+                targetDayHeader = document.querySelectorAll('.calendar-table__header'),
+                allCells = document.querySelectorAll('.calendar-table__cell'),
+                lastDateOfMonth = getLastDayOfMonth(showedYear, showedMonth);
 
-    //         targetDate = targetDate + '';
+            let targetEvent = eventDate.dayEvent,
+                targetDescr = eventDate.dayDescr,
+                targetName = eventDate.dayName;
 
-    //         let targetDay = +outputData.dayDate.slice(8),
-    //             targetMonth = +outputData.dayDate.slice(5,7),
-    //             targetYear = +outputData.dayDate.slice(0, 4);
+            targetDate = targetDate + '';
 
-    //         if (showedYear == targetYear && showedMonth + 1 == targetMonth) {
-    //             targetDayHeader.forEach((e, index) => {
-    //                 if (index < 7) {
-    //                     for (let i = 0; i < 7; i ++) {
-    //                         let cellStr = e[i].innerText,
-    //                             cellNum = +cellStr.replace(/\D/g, '');
-    //                     }
-    //                 }
-    //             });
-    //         }       
-    //         if (outputData) {
-    //             break;
-    //         }
-    //     }
-    // }
-    // getData('.calendar-table__row');
+            let targetDay = +targetDate.slice(8),
+                targetMonth = +targetDate.slice(5,7),
+                targetYear = +targetDate.slice(0, 4);
+
+            if (showedYear == targetYear && showedMonth + 1 == targetMonth) {
+               for (let i = 0; i < targetDayHeader.length; i++) {
+                    if (i < 7 && i <= lastDateOfMonth) {
+                        showEventDay(i, targetDayHeader, targetDay, allCells, targetEvent, targetName);
+                    } else if (i <= lastDateOfMonth) {
+                        showEventDay(i, targetDayHeader, targetDay, allCells, targetEvent, targetName);
+                    }
+                }               
+            } 
+            if (localStorage.length > i) {
+                break;
+            }
+        }
+    }
+    getData();
+
+    function showEventDay(num, targetDayHeader, targetDay, allCells, targetEvent, targetName) {
+        let cellStr = targetDayHeader[num].innerText,
+            cellNum = +cellStr.replace(/\D/g, '');
+        if (targetDay == cellNum) {
+            allCells[num].classList.add('calendar-table__cell_event');
+            const cellTitle = allCells[num].querySelector('.calendar-table__title'),
+                  cellName = allCells[num].querySelector('.calendar-table__descr');
+
+            cellTitle.textContent = `${targetEvent}`;
+            cellName.textContent = `${targetName}`;
+        }
+
+    }
+
+    // showModalQuickForm
+    
+    const modalQuickTrigger = document.querySelector('[data-addEvent]');
+    
+    modalQuickTrigger.addEventListener('click', (e) => {
+        let targetX = e.target.getBoundingClientRect().x,
+            targetY = e.target.getBoundingClientRect().y;
+        
+        modalQuickForm.classList.add('show');
+        modalQuickForm.classList.remove('hide');
+
+        modalQuickForm.style.top = `${targetY + 26}px`;
+        modalQuickForm.style.left = `${targetX}px`;
+
+        modalQuickCloseBtn.addEventListener('click', () => {
+            closeModalQuickForm();
+        });
+
+        // modalTrigger.forEach(e => {
+        //     if (elem.target !== e.target || modalQuickForm.classList.contains('hide')) {
+        //         e.classList.remove('calendar-table__cell_active');
+
+        //         modalDayCloseBtn.addEventListener('click', () => {
+        //             closeModalDayForm();
+        //             e.classList.remove('calendar-table__cell_active');
+        //         });
+        //     }
+        // });
+        // resetActiveClassCell(modalTrigger, elem);
+        
+        // postData(modalDayForm, modalTrigger);
+        
+        // getData('.calendar-table__row');
+    });
+    
+
+    function closeModalQuickForm() {
+        modalQuickForm.classList.remove('show');
+        modalQuickForm.classList.add('hide');
+    }
 
 }('.calendar'));

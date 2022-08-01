@@ -13,7 +13,7 @@
         <div class="container">
             <div class="header__content-wrapper">
                 <div class="header__btns-wrapper">
-                    <button class="header__button">Добавить</button>
+                    <button class="header__button" data-addEvent>Добавить</button>
                     <button class="header__button">Обновить</button>
                 </div>
                 <div class="header__input-wrapper">
@@ -56,6 +56,22 @@
                     <div class="modal-day__btns-wrapper">
                         <button class="modal-day__button" data-submite>Готово</button>
                         <button class="modal-day__button">Удалить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="modal-quick__form hide" >
+            <div class="modal-quick__wrapper">
+                <form class="modal-quick__form_wrapper" action="#">
+                    <div class="modal-quick__close">
+                        <img data-quickClose src="icons/close.svg" alt="">
+                    </div>
+                        <input class="modal-quick__input" name="event" data-quickInputEvent required placeholder="ГГГГ.ММ.ДД, Событие" type="text">
+                    <div class="modal-quick__btns-wrapper">
+                        <button class="modal-quick__button" data-submite>Создать</button>
                     </div>
                 </form>
             </div>
