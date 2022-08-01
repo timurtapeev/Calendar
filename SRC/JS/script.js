@@ -513,7 +513,8 @@
         modalQuickForm.style.top = `${targetY + 26}px`;
         modalQuickForm.style.left = `${targetX}px`;
         
-        modalQuickForm.addEventListener('submit', () => {
+        modalQuickForm.addEventListener('submit', (e) => {
+            e.preventDefault();
             let targetDayHeader = document.querySelectorAll('.calendar-table__header'),
                 lastDateOfMonth = getLastDayOfMonth(showedYear, showedMonth),
                 allCells = document.querySelectorAll('.calendar-table__cell');
