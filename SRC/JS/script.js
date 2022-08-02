@@ -342,7 +342,8 @@ window.addEventListener('DOMContentLoaded', () => {
                     let targetCell = event.target.closest('.calendar-table__cell');
 
                     if (targetCell.classList.contains('calendar-table__cell_event')) {
-                        let infoDate = document.querySelector('.modal-info__date');
+                        let infoDate = document.querySelector('.modal-info__date'),
+                            infoDoneBtn = document.querySelector('[data-done]');
 
                         placeModalDayForm(event, modalDayTrigger, modalInfoForm);
                         closeModalForm(modalDayForm);
@@ -383,7 +384,6 @@ window.addEventListener('DOMContentLoaded', () => {
                         let deleteEventBtn = document.querySelector('[data-deleteEvent]');
                         deleteEventBtn.addEventListener('click', (e) => {
                             e.preventDefault();
-                            console.log(deleteTitle);
                             deleteTitle.textContent = '';
                             deleteNames.textContent = '';
                             if (event.target.classList.contains('calendar-table__cell_event')) {
@@ -395,6 +395,69 @@ window.addEventListener('DOMContentLoaded', () => {
                             closeModalForm(modalInfoForm);
                             resetActiveClassCell(modalDayTrigger, e);
                             localStorage.removeItem('event 1');
+                        });
+                        infoDoneBtn.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            closeModalForm(modalInfoForm);
+                            resetActiveClassCell(modalDayTrigger, e);
+                        });
+
+                        const refreshBtn = document.querySelector('[data-refreshEvent]');
+
+                        refreshBtn.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            placeModalDayForm(event, modalDayTrigger, modalDayForm);
+                            closeModalForm(modalInfoForm);
+                            postData(modalDayForm);
+
+                            let targetDate;
+                            
+                            if (event.target.classList.contains('calendar-table__cell_event')) {
+                                targetDate = event.target.querySelector('.calendar-table__header').innerText;
+                            } else {
+                                targetDate = targetCell.querySelector('.calendar-table__header').innerText;
+                            }
+                            
+                            let cellNum = +targetDate.replace(/\D/g, '');
+                            
+                            if (cellNum < 10) {
+                                cellNum = `0${cellNum}`;
+                            }
+
+                            let targetMonth = showedMonth;
+
+                            if (showedMonth < 9) {
+                                targetMonth = `0${showedMonth + 1}`;
+                            } else {
+                                targetMonth = showedMonth + 1;
+                            }
+                            inputDate.value = `${cellNum}.${targetMonth}.${showedYear}`;
+                            
+
+                            let deleteTitle,
+                            deleteNames;
+                            if (event.target.classList.contains('calendar-table__cell_event')) {
+                                deleteTitle = event.target.querySelector('.calendar-table__title');
+                                deleteNames = event.target.querySelector('.calendar-table__descr');
+                            } else {
+                                deleteTitle = targetCell.querySelector('.calendar-table__title');
+                                deleteNames = targetCell.querySelector('.calendar-table__descr');
+                            }
+                            let deleteEventBtn = document.querySelector('[data-delete]');
+                            deleteEventBtn.addEventListener('click', (e) => {
+                                e.preventDefault();
+                                deleteTitle.textContent = '';
+                                deleteNames.textContent = '';
+                                if (event.target.classList.contains('calendar-table__cell_event')) {
+                                    event.target.classList.remove('calendar-table__cell_event');
+                                } else {
+                                    targetCell.classList.remove('calendar-table__cell_event');
+                                }
+                                
+                                closeModalForm(modalDayForm);
+                                resetActiveClassCell(modalDayTrigger, e);
+                                localStorage.removeItem('event 1');
+                            });
                         });
                     } else {
                         placeModalDayForm(event, modalDayTrigger, modalDayForm);
@@ -444,7 +507,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
             let targetMonth = showedMonth;
 
-            if (showedMonth < 10) {
+            if (showedMonth < 9) {
                 targetMonth = `0${showedMonth + 1}`;
             } else {
                 targetMonth = showedMonth + 1;
@@ -663,6 +726,8 @@ window.addEventListener('DOMContentLoaded', () => {
             modalQuickForm.classList.remove('show');
             modalQuickForm.classList.add('hide');
         }
+
+
 
         // function doEventArray(num) {
         //     let eventArray;
