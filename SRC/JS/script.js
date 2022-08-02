@@ -401,6 +401,40 @@ window.addEventListener('DOMContentLoaded', () => {
                             
                             closeModalForm(modalInfoForm);
                             resetActiveClassCell(modalDayTrigger, e);
+
+                            let targetDay;
+                            
+                            if (event.target.classList.contains('calendar-table__cell_event')) {
+                                targetDay = event.target.querySelector('.calendar-table__header');
+                            } else {
+                                targetDay = targetCell.querySelector('.calendar-table__header');
+                            }
+                            
+                            targetDay = targetDay.innerText;
+                            let cellNum = +targetDay.replace(/\D/g, '');
+                            
+                            let targetMonth;
+                            
+                            if (cellNum < 10) {
+                                cellNum = `0${cellNum}`;
+                            }
+                            
+                            if (showedMonth < 9) {
+                                targetMonth = `0${showedMonth + 1}`;
+                            } else {
+                                targetMonth = showedMonth + 1;
+                            }
+                            let targetDates = `${cellNum}.${targetMonth}.${showedYear}`;
+
+                            for (let i = 0; i < localArray.length; i++) {
+                                console.log(localArray[i].dayDate);
+                                console.log(targetDates);
+                                if (localArray[i].dayDate == targetDates) {
+                                    localArray.splice(i, 1);
+                                }
+                                localStorage.setItem('events', JSON.stringify(localArray));
+                            }
+                            
                             localStorage.removeItem('event 1');
                         });
                         infoDoneBtn.addEventListener('click', (e) => {
@@ -627,12 +661,12 @@ window.addEventListener('DOMContentLoaded', () => {
 
                 let eventDate = eventDateArray[i];
                 
-                let targetDate = eventDate.dayDate,
-                    targetDayHeader = document.querySelectorAll('.calendar-table__header'),
+                let targetDayHeader = document.querySelectorAll('.calendar-table__header'),
                     allCells = document.querySelectorAll('.calendar-table__cell'),
                     lastDateOfMonth = getLastDayOfMonth(showedYear, showedMonth);
     
-                let targetEvent = eventDate.dayEvent,
+                let targetDate = eventDate.dayDate,
+                    targetEvent = eventDate.dayEvent,
                     targetDescr = eventDate.dayDescr,
                     targetName = eventDate.dayName;
     
