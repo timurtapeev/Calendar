@@ -13,6 +13,8 @@
             border-bottom: 1px solid #292929
     &__row :first-child
         border-width: 1px 1px 0px 1px     
+    &__cell:hover
+        background-color: #F4F4F4
     &__cell
         padding: 8px
         gap: 8px
@@ -21,12 +23,13 @@
         background: #FFFFFF
         border: 0px solid #292929
         border-width: 1px 1px 0px 0px
+        cursor: pointer
         &_active
             box-shadow: 0px 0px 10px 2px #0271C7
         &_event
             background-color: #C2E4FE
-        &_hover
-            background: #27A1FF
+        &_event:hover
+            background-color: #27A1FF
         &_today
             background-color: #F4F4F4
     &__header

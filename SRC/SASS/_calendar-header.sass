@@ -23,6 +23,19 @@
         border-radius: 4px
         transform: rotate(-180deg)
         border: none
+        &_next:hover
+            img
+                opacity: 0
+            background: url('../icons/activearrownext.png') (center center) #6B6B6B no-repeat
+        &_prev:hover
+            img
+                opacity: 0
+            background: url('../icons/activearrow.svg') (center center) #6B6B6B no-repeat
+    &__button:active
+        background-color: #CFCFCF
+    &__button:disabled
+        background-color: #FFFFFF
+        color: #CFCFCF
     &__button-today
         padding: 2px 6px
         width: 59px
@@ -37,5 +50,13 @@
         font-size: 12px
         line-height: 14px
         color: #292929
+    &__button-today:hover
+        background-color: #6B6B6B
+        color: #FFFFFF
+    &__button-today:active
+        background-color: #CFCFCF
+    &__button-today:disabled
+        background-color: #FFFFFF
+        color: #CFCFCF
 
 

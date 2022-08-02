@@ -339,7 +339,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
             modalDayTrigger.forEach(element => {
                 element.addEventListener('click', (event) => {
-                    
+
                     if (!event.target.classList.contains('calendar-table__cell_event')) {
                         placeModalDayForm(event, modalDayTrigger, modalDayForm);
                         closeModalForm(modalInfoForm);
@@ -366,13 +366,18 @@ window.addEventListener('DOMContentLoaded', () => {
 
         function placeModalDayForm(event, modalDayTrigger, modalForm) {
             let targetX = event.target.getBoundingClientRect().x,
-            targetY = event.target.getBoundingClientRect().y;
+                targetY = event.target.getBoundingClientRect().y;
         
             modalForm.classList.add('show');
             modalForm.classList.remove('hide');
 
+            if (targetX > 730) {
+                modalForm.style.left = `${targetX - 300}px`;
+            } else {
+                modalForm.style.left = `${targetX + 143}px`;
+            }
+            
             modalForm.style.top = `${targetY}px`;
-            modalForm.style.left = `${targetX + 143}px`;
 
             modalDayTrigger.forEach(e => {
             if (event.target !== e.target || modalForm.classList.contains('hide')) {
@@ -628,5 +633,5 @@ window.addEventListener('DOMContentLoaded', () => {
         //     localStorage.setItem(`events`, array);
         // }
 
-}('.calendar'));
+    }('.calendar'));
 });
