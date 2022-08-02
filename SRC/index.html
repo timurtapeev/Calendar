@@ -13,7 +13,7 @@
         <div class="container">
             <div class="header__content-wrapper">
                 <div class="header__btns-wrapper">
-                    <button class="header__button" data-add-event>Добавить</button>
+                    <button class="header__button" data-addQuickEvent>Добавить</button>
                     <button class="header__button">Обновить</button>
                 </div>
                 <div class="header__input-wrapper">
@@ -40,7 +40,6 @@
         </div>
     </section>
 
-    <div class="container">
         <div class="modal-day__form hide" >
             <div class="modal-day__wrapper">
                 <form action="#">
@@ -60,9 +59,7 @@
                 </form>
             </div>
         </div>
-    </div>
 
-    <div class="container">
         <div class="modal-quick__form hide" >
             <div class="modal-quick__wrapper">
                 <form class="modal-quick__form_wrapper" action="#">
@@ -76,7 +73,29 @@
                 </form>
             </div>
         </div>
-    </div>
+
+        <div class="modal-info__form  hide" >
+            <div class="modal-info__wrapper">
+                <form action="#">
+                    <div class="modal-info__close">
+                        <img data-modalInfoClose src="icons/close.svg" alt="">
+                    </div>
+                    <div class="modal-info__descr">
+                        <div class="modal-info__title">Событие</div>
+                        <div class="modal-info__date">Дата</div>
+                        <div class="modal-info__people_wrapper">
+                            <div class="modal-info__people">Участники:</div>
+                            <div class="modal-info__people_names">Я</div>
+                        </div>
+                    </div>
+                    <input class="modal-info__input modal-info__input_descr" name="descr" data-infoInputDescr placeholder="Описание" type="text">
+                    <div class="modal-day__btns-wrapper">
+                        <button class="modal-day__button" data-submite>Готово</button>
+                        <button class="modal-day__button">Удалить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
     <script src="JS/script.js"></script>
 </body>
