@@ -25,7 +25,14 @@ window.addEventListener('DOMContentLoaded', () => {
             dates = calendar.querySelector('.calendar-table__wrapper'),
             current = {year: showedYear, 
                     month: showedMonth, 
-                    date: showedDate};
+                    date: showedDate},
+            localArray;
+
+        if (localStorage.getItem('events')) {
+            localArray = JSON.parse(localStorage.getItem('events'));
+        } else {
+            localArray = [];
+        }
 
         initCalendar(showedYear, showedMonth, current, calendar);
 
@@ -587,29 +594,18 @@ window.addEventListener('DOMContentLoaded', () => {
                 dayInputNames = document.querySelector('[data-dayInputNames]'),
                 dayInputDescr = document.querySelector('[data-dayInputDescr]');
 
-            let eventNumber = 0;
 
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
-                
-                eventNumber++;
+                let event = {
+                    dayEvent: dayInputEvent.value,
+                    dayDate: dayInputDate.value,
+                    dayName: dayInputNames.value,
+                    dayDescr: dayInputDescr.value
+                };
 
-                let event = dayInputEvent.value,
-                    date = dayInputDate.value,
-                    name = dayInputNames.value,
-                    descr = dayInputDescr.value;
-
-                let inputData = function(event, date, name, descr) {
-                    this.dayEvent = event;
-                    this.dayDate = date;
-                    this.dayName = name;
-                    this.dayDescr = descr;
-                    };
-                
-                let targetDay = JSON.stringify(new inputData(event, date, name, descr)),
-                    eventDayNumber = `event ${eventNumber}`;
-
-                localStorage.setItem(eventDayNumber,(localStorage.getItem(`event ${eventNumber-1}`) || '') + targetDay);
+                localArray.push(event);
+                localStorage.setItem('events', JSON.stringify(localArray));
 
                 modalDayTrigger.forEach((e) =>{
                     e.classList.remove('calendar-table__cell_active');
@@ -625,34 +621,39 @@ window.addEventListener('DOMContentLoaded', () => {
         }
 
         function getData(selector) {
-            let eventDate = JSON.parse(localStorage.getItem(`event ${1}`));
-            
-            let targetDate = eventDate.dayDate,
-                targetDayHeader = document.querySelectorAll('.calendar-table__header'),
-                allCells = document.querySelectorAll('.calendar-table__cell'),
-                lastDateOfMonth = getLastDayOfMonth(showedYear, showedMonth);
+            let eventDateArray = JSON.parse(localStorage.getItem(`events`));
 
-            let targetEvent = eventDate.dayEvent,
-                targetDescr = eventDate.dayDescr,
-                targetName = eventDate.dayName;
+            for (let i = 0; i <= eventDateArray.length; i++) {
 
-            targetDate = targetDate + '';
-
-            let targetDay = +targetDate.slice(0,2),
-                targetMonth = +targetDate.slice(3,5),
-                targetYear = +targetDate.slice(6);
-
-            if (showedYear == targetYear && showedMonth + 1 == targetMonth) {
-            for (let i = 0; i < targetDayHeader.length; i++) {
-                    if (i < 7 && i <= lastDateOfMonth) {
-                        showEventDay(i, targetDayHeader, targetDay, allCells, targetEvent, targetName);
-                    } else if (i <= lastDateOfMonth -1) {
-                        showEventDay(i, targetDayHeader, targetDay, allCells, targetEvent, targetName);
+                let eventDate = eventDateArray[i];
+                
+                let targetDate = eventDate.dayDate,
+                    targetDayHeader = document.querySelectorAll('.calendar-table__header'),
+                    allCells = document.querySelectorAll('.calendar-table__cell'),
+                    lastDateOfMonth = getLastDayOfMonth(showedYear, showedMonth);
+    
+                let targetEvent = eventDate.dayEvent,
+                    targetDescr = eventDate.dayDescr,
+                    targetName = eventDate.dayName;
+    
+                targetDate = targetDate + '';
+    
+                let targetDay = +targetDate.slice(0,2),
+                    targetMonth = +targetDate.slice(3,5),
+                    targetYear = +targetDate.slice(6);
+    
+                if (showedYear == targetYear && showedMonth + 1 == targetMonth) {
+                for (let i = 0; i < targetDayHeader.length; i++) {
+                        if (i < 7 && i <= lastDateOfMonth) {
+                            showEventDay(i, targetDayHeader, targetDay, allCells, targetEvent, targetName);
+                        } else if (i <= lastDateOfMonth -1) {
+                            showEventDay(i, targetDayHeader, targetDay, allCells, targetEvent, targetName);
+                        }
                     }
-                }
-            } 
-        }
+                } 
+            }
 
+        }
         try {
             getData();
         } catch(e) {
@@ -705,15 +706,30 @@ window.addEventListener('DOMContentLoaded', () => {
                     quickYear = +quickInfo.slice(6,10),
                     quickEventName = quickInfo.slice(11);
 
-                    if (showedYear == quickYear && showedMonth + 1 == quickMonth) {
-                        for (let i = 0; i < targetDayHeader.length; i++) {
-                            if (i < 7 && i <= lastDateOfMonth) {
-                                showEventDay(i, targetDayHeader, quickDate, allCells, quickEventName);
-                            } else if (i <= lastDateOfMonth) {
-                                showEventDay(i, targetDayHeader, quickDate, allCells, quickEventName);
-                            }
+                if (showedYear == quickYear && showedMonth + 1 == quickMonth) {
+                    for (let i = 0; i < targetDayHeader.length; i++) {
+                        if (i < 7 && i <= lastDateOfMonth) {
+                            showEventDay(i, targetDayHeader, quickDate, allCells, quickEventName);
+                        } else if (i <= lastDateOfMonth) {
+                            showEventDay(i, targetDayHeader, quickDate, allCells, quickEventName);
                         }
-                    } 
+                    }
+                }
+                let event = {
+                    dayEvent: quickEventName,
+                    dayDate: quickInfo.slice(0, 10),
+                    dayName: '',
+                    dayDescr: ''
+                };
+
+                localArray.push(event);
+                localStorage.setItem('events', JSON.stringify(localArray));
+
+                closeModalForm(modalDayForm);
+                closeModalForm(modalInfoForm);
+                try {
+                    getData();
+                } catch(e) {}
                 closeModalQuickForm();
             });
         });
@@ -726,27 +742,6 @@ window.addEventListener('DOMContentLoaded', () => {
             modalQuickForm.classList.remove('show');
             modalQuickForm.classList.add('hide');
         }
-
-
-
-        // function doEventArray(num) {
-        //     let eventArray;
-            
-        //     if (localStorage.length == 0) {
-        //         eventArray = [];
-        //     } else {
-        //         eventArray = JSON.parse(localStorage.getItem(`events`));
-        //     }
-
-        //     for (let i = 0; i <= num; i ++) {
-        //         eventArray[i] = JSON.parse(localStorage.getItem(`events`));
-        //     }
-        //     getEventArray(eventArray);
-        // }
-
-        // function getEventArray(array) {
-        //     localStorage.setItem(`events`, array);
-        // }
 
     }('.calendar'));
 });
