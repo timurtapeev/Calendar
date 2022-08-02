@@ -687,8 +687,12 @@ window.addEventListener('DOMContentLoaded', () => {
                 for (let i = 0; i < targetDayHeader.length; i++) {
                         if (i < 7 && i <= lastDateOfMonth) {
                             showEventDay(i, targetDayHeader, targetDay, allCells, targetEvent, targetName);
+                            let descr = document.querySelector('[data-infoInputDescr]');
+                            descr.value = targetDescr;
                         } else if (i <= lastDateOfMonth -1) {
                             showEventDay(i, targetDayHeader, targetDay, allCells, targetEvent, targetName);
+                            let descr = document.querySelector('[data-infoInputDescr]');
+                            descr.value = targetDescr;
                         }
                     }
                 } 
