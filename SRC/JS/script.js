@@ -434,8 +434,6 @@ window.addEventListener('DOMContentLoaded', () => {
                                 }
                                 localStorage.setItem('events', JSON.stringify(localArray));
                             }
-                            
-                            localStorage.removeItem('event 1');
                         });
                         infoDoneBtn.addEventListener('click', (e) => {
                             e.preventDefault();
@@ -472,11 +470,12 @@ window.addEventListener('DOMContentLoaded', () => {
                             } else {
                                 targetMonth = showedMonth + 1;
                             }
-                            inputDate.value = `${cellNum}.${targetMonth}.${showedYear}`;
+                            let targetDates =`${cellNum}.${targetMonth}.${showedYear}`;
+                            inputDate.value = targetDates;
                             
 
                             let deleteTitle,
-                            deleteNames;
+                                deleteNames;
                             if (event.target.classList.contains('calendar-table__cell_event')) {
                                 deleteTitle = event.target.querySelector('.calendar-table__title');
                                 deleteNames = event.target.querySelector('.calendar-table__descr');
@@ -494,10 +493,18 @@ window.addEventListener('DOMContentLoaded', () => {
                                 } else {
                                     targetCell.classList.remove('calendar-table__cell_event');
                                 }
+
+                                for (let i = 0; i < localArray.length; i++) {
+                                    console.log(localArray[i].dayDate);
+                                    console.log(targetDates);
+                                    if (localArray[i].dayDate == targetDates) {
+                                        localArray.splice(i, 1);
+                                    }
+                                    localStorage.setItem('events', JSON.stringify(localArray));
+                                }
                                 
                                 closeModalForm(modalDayForm);
                                 resetActiveClassCell(modalDayTrigger, e);
-                                localStorage.removeItem('event 1');
                             });
                         });
                     } else {
