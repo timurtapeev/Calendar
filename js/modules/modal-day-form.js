@@ -2,7 +2,7 @@ import {showedMonth, showedYear} from './calendar-btns';
 import {localArray, postData} from './local-storage';
 import {modalInfoForm, modalDayForm, modalInfoCloseBtn, 
         dates , modalDayCloseBtn, monthes, modalQuickForm, infoDate, 
-        infoDoneBtn, refreshBtn, deleteEventBtn, refreshDeleteEventBtn} from './variables';
+        infoDoneBtn, refreshBtn, deleteEventBtn, refreshDeleteEventBtn, searchForm} from './variables';
 
 function showModalDayForm() {
     const modalDayTrigger = document.querySelectorAll('.calendar-table__cell'),
@@ -30,6 +30,7 @@ function showModalDayForm() {
                 placeModalDayForm(event, modalDayTrigger, modalInfoForm);
                 closeModalForm(modalDayForm);
                 closeModalForm(modalQuickForm);
+                closeModalForm(searchForm);
                 showEventDate(event, infoDate);
                 showEvent(event, targetCell);
                 showPeople(event, targetCell);
@@ -70,6 +71,7 @@ function showModalDayForm() {
                     placeModalDayForm(event, modalDayTrigger, modalDayForm);
                     closeModalForm(modalInfoForm);
                     closeModalForm(modalQuickForm);
+                    closeModalForm(searchForm);
                     postData(modalDayForm);
                     showEventDateRefreshBtn(targetDate, targetCell, targetDates, inputDate, event);
 
@@ -79,6 +81,7 @@ function showModalDayForm() {
                         e.preventDefault();
                         closeModalForm(modalInfoForm);
                         closeModalForm(modalDayForm);
+                        closeModalForm(searchForm);
                         resetActiveClassCell(modalDayTrigger, e);
                         deleteEvent(deleteTitle, deleteNames, targetCell, event);
                     });
@@ -90,6 +93,7 @@ function showModalDayForm() {
                 placeModalDayForm(event, modalDayTrigger, modalDayForm);
                 closeModalForm(modalInfoForm);
                 closeModalForm(modalQuickForm);
+                closeModalForm(searchForm);
                 showEventDate(event, inputDate);
                 resetActiveClassCell(modalDayTrigger, event);
                 postData(modalDayForm);

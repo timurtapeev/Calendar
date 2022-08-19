@@ -5,6 +5,7 @@ import {quickModalForm} from './modules/modal-quick-form';
 import {showSeacrInput} from './modules/search-input';
 import {showModalDayForm} from './modules/modal-day-form';
 import {calendar} from './modules/variables';
+import {closeForms} from './modules/close-froms';
 
 window.addEventListener('DOMContentLoaded', () => {
     quickModalForm();
@@ -13,4 +14,5 @@ window.addEventListener('DOMContentLoaded', () => {
     showModalDayForm();
     initCalendar(showedYear, showedMonth, current, calendar);
     showLocalArray();
+    closeForms();
 });

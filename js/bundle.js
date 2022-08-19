@@ -126,6 +126,51 @@ function changeMonth() {
 
 /***/ }),
 
+/***/ "./js/modules/close-froms.js":
+/*!***********************************!*\
+  !*** ./js/modules/close-froms.js ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "closeForms": () => (/* binding */ closeForms)
+/* harmony export */ });
+/* harmony import */ var _modal_day_form__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modal-day-form */ "./js/modules/modal-day-form.js");
+/* harmony import */ var _variables__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./variables */ "./js/modules/variables.js");
+
+
+
+const header = document.querySelector('.header');
+function closeForms() {
+    _variables__WEBPACK_IMPORTED_MODULE_1__.calendar.addEventListener('click', (event) => {
+        let targetCell = event.target.closest('.calendar-table__cell');
+        if (targetCell) {
+
+        } else {
+            (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalQuickForm);
+            (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalDayForm);
+            (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalInfoForm);
+            (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.searchForm);
+        }
+    });
+    header.addEventListener('click', (e) => {
+        let targetElem = e.target.closest('[data-headerBtn]');
+        if (targetElem) {
+            
+        } else {
+            (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalQuickForm);
+            (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalDayForm);
+            (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalInfoForm);
+            (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.searchForm);
+        }
+    });
+}
+
+
+
+/***/ }),
+
 /***/ "./js/modules/local-storage.js":
 /*!*************************************!*\
   !*** ./js/modules/local-storage.js ***!
@@ -285,6 +330,7 @@ function showModalDayForm() {
                 placeModalDayForm(event, modalDayTrigger, _variables__WEBPACK_IMPORTED_MODULE_2__.modalInfoForm);
                 closeModalForm(_variables__WEBPACK_IMPORTED_MODULE_2__.modalDayForm);
                 closeModalForm(_variables__WEBPACK_IMPORTED_MODULE_2__.modalQuickForm);
+                closeModalForm(_variables__WEBPACK_IMPORTED_MODULE_2__.searchForm);
                 showEventDate(event, _variables__WEBPACK_IMPORTED_MODULE_2__.infoDate);
                 showEvent(event, targetCell);
                 showPeople(event, targetCell);
@@ -325,6 +371,7 @@ function showModalDayForm() {
                     placeModalDayForm(event, modalDayTrigger, _variables__WEBPACK_IMPORTED_MODULE_2__.modalDayForm);
                     closeModalForm(_variables__WEBPACK_IMPORTED_MODULE_2__.modalInfoForm);
                     closeModalForm(_variables__WEBPACK_IMPORTED_MODULE_2__.modalQuickForm);
+                    closeModalForm(_variables__WEBPACK_IMPORTED_MODULE_2__.searchForm);
                     (0,_local_storage__WEBPACK_IMPORTED_MODULE_1__.postData)(_variables__WEBPACK_IMPORTED_MODULE_2__.modalDayForm);
                     showEventDateRefreshBtn(targetDate, targetCell, targetDates, inputDate, event);
 
@@ -334,6 +381,7 @@ function showModalDayForm() {
                         e.preventDefault();
                         closeModalForm(_variables__WEBPACK_IMPORTED_MODULE_2__.modalInfoForm);
                         closeModalForm(_variables__WEBPACK_IMPORTED_MODULE_2__.modalDayForm);
+                        closeModalForm(_variables__WEBPACK_IMPORTED_MODULE_2__.searchForm);
                         resetActiveClassCell(modalDayTrigger, e);
                         deleteEvent(deleteTitle, deleteNames, targetCell, event);
                     });
@@ -345,6 +393,7 @@ function showModalDayForm() {
                 placeModalDayForm(event, modalDayTrigger, _variables__WEBPACK_IMPORTED_MODULE_2__.modalDayForm);
                 closeModalForm(_variables__WEBPACK_IMPORTED_MODULE_2__.modalInfoForm);
                 closeModalForm(_variables__WEBPACK_IMPORTED_MODULE_2__.modalQuickForm);
+                closeModalForm(_variables__WEBPACK_IMPORTED_MODULE_2__.searchForm);
                 showEventDate(event, inputDate);
                 resetActiveClassCell(modalDayTrigger, event);
                 (0,_local_storage__WEBPACK_IMPORTED_MODULE_1__.postData)(_variables__WEBPACK_IMPORTED_MODULE_2__.modalDayForm);
@@ -560,6 +609,7 @@ function quickModalForm() {
         const allCells = document.querySelectorAll('.calendar-table__cell');
         (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_4__.modalInfoForm);
         (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_4__.modalDayForm);
+        (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_4__.searchForm);
         (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.resetActiveClassCell)(allCells, e);
 
         let targetX = e.target.getBoundingClientRect().x,
@@ -603,6 +653,7 @@ function quickModalForm() {
 
             (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_4__.modalDayForm);
             (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_4__.modalInfoForm);
+            (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_4__.searchForm);
             try {
                 (0,_local_storage__WEBPACK_IMPORTED_MODULE_3__.getData)();
             } catch(e) {}
@@ -646,41 +697,61 @@ function showEventDay(num, targetDayHeader, targetDay, allCells, targetEvent, ta
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "createInputEventList": () => (/* binding */ createInputEventList),
 /* harmony export */   "showSeacrInput": () => (/* binding */ showSeacrInput)
 /* harmony export */ });
 /* harmony import */ var _modal_day_form__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modal-day-form */ "./js/modules/modal-day-form.js");
 /* harmony import */ var _variables__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./variables */ "./js/modules/variables.js");
-/* harmony import */ var _local_storage__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./local-storage */ "./js/modules/local-storage.js");
 
 
 
-
-const modalDayTrigger = document.querySelectorAll('.calendar-table__cell');
+// const modalDayTrigger = document.querySelectorAll('.calendar-table__cell');
 
 function showSeacrInput() {
     _variables__WEBPACK_IMPORTED_MODULE_1__.searchInput.addEventListener('click', (e) => {
         let targetX = e.target.getBoundingClientRect().x,
-             targetY = e.target.getBoundingClientRect().y;
-
-        (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalDayForm);
-        (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalInfoForm);
-        (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalQuickForm);
-        modalDayTrigger.forEach((e) => {
-            (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.resetActiveClassCell)(modalDayTrigger, e);
-        });
-    
+            targetY = e.target.getBoundingClientRect().y;
+        
         _variables__WEBPACK_IMPORTED_MODULE_1__.searchForm.style.top = `${targetY + 30}px`;
         _variables__WEBPACK_IMPORTED_MODULE_1__.searchForm.style.left = `${targetX}px`;
 
         _variables__WEBPACK_IMPORTED_MODULE_1__.searchForm.classList.add('show');
         _variables__WEBPACK_IMPORTED_MODULE_1__.searchForm.classList.remove('hide');
-
+        (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalDayForm);
+        (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalInfoForm);
+        (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalQuickForm);
         createInputEventList();
+
+        // modalDayTrigger.forEach((e) => {
+        //     resetActiveClassCell(modalDayTrigger, e);
+        // });       
     });
 }
 
 function createInputEventList() {
+    const inputWrapper = document.querySelector('.search-input__wrapper');
+    inputWrapper.innerHTML = ``;
     let eventDateArray = JSON.parse(localStorage.getItem(`events`));
+
+    try {
+        for (let i = 0; i < eventDateArray.length; i++) {
+
+            let eventDate = eventDateArray[i];
+            let inputItem = document.createElement('div');
+                
+            let targetDate = eventDate.dayDate,
+                targetEvent = eventDate.dayEvent;
+    
+            inputItem.classList.add('search-input__item');
+            inputItem.innerHTML = `
+                <div class="search-input__descr">
+                    <p class="search-input__event">${targetEvent}</p>
+                    <p class="search-input__date">${targetDate}</p>
+                </div>
+            `;
+            inputWrapper.appendChild(inputItem);
+        }
+    } catch(e) {}
 }
 
 
@@ -1041,6 +1112,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_search_input__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/search-input */ "./js/modules/search-input.js");
 /* harmony import */ var _modules_modal_day_form__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/modal-day-form */ "./js/modules/modal-day-form.js");
 /* harmony import */ var _modules_variables__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/variables */ "./js/modules/variables.js");
+/* harmony import */ var _modules_close_froms__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./modules/close-froms */ "./js/modules/close-froms.js");
+
 
 
 
@@ -1056,6 +1129,7 @@ window.addEventListener('DOMContentLoaded', () => {
     (0,_modules_modal_day_form__WEBPACK_IMPORTED_MODULE_5__.showModalDayForm)();
     (0,_modules_table__WEBPACK_IMPORTED_MODULE_0__.initCalendar)(_modules_calendar_btns__WEBPACK_IMPORTED_MODULE_2__.showedYear, _modules_calendar_btns__WEBPACK_IMPORTED_MODULE_2__.showedMonth, _modules_calendar_btns__WEBPACK_IMPORTED_MODULE_2__.current, _modules_variables__WEBPACK_IMPORTED_MODULE_6__.calendar);
     (0,_modules_local_storage__WEBPACK_IMPORTED_MODULE_1__.showLocalArray)();
+    (0,_modules_close_froms__WEBPACK_IMPORTED_MODULE_7__.closeForms)();
 });
 
 })();

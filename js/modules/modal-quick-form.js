@@ -2,7 +2,7 @@ import {closeModalForm, resetActiveClassCell} from './modal-day-form';
 import {showedYear, showedMonth} from './calendar-btns';
 import {getLastDayOfMonth} from './table';
 import {localArray, getData} from './local-storage';
-import {modalDayForm, modalInfoForm, modalQuickForm} from './variables';
+import {modalDayForm, modalInfoForm, modalQuickForm, searchForm} from './variables';
 
 function quickModalForm() {
     let modalQuickCloseBtn = document.querySelector('[data-quickClose]'),
@@ -12,6 +12,7 @@ function quickModalForm() {
         const allCells = document.querySelectorAll('.calendar-table__cell');
         closeModalForm(modalInfoForm);
         closeModalForm(modalDayForm);
+        closeModalForm(searchForm);
         resetActiveClassCell(allCells, e);
 
         let targetX = e.target.getBoundingClientRect().x,
@@ -55,6 +56,7 @@ function quickModalForm() {
 
             closeModalForm(modalDayForm);
             closeModalForm(modalInfoForm);
+            closeModalForm(searchForm);
             try {
                 getData();
             } catch(e) {}
