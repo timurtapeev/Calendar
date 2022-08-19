@@ -1,10 +1,10 @@
-import {closeModalForm, resetActiveClassCell} from './modal-day-form';
+import {closeModalForm} from './modal-day-form';
 import {modalDayForm, modalInfoForm, modalQuickForm, searchInput, searchForm} from './variables';
-
-// const modalDayTrigger = document.querySelectorAll('.calendar-table__cell');
 
 function showSeacrInput() {
     searchInput.addEventListener('click', (e) => {
+        let triggerCell = document.querySelectorAll('.calendar-table__cell_active');
+        let eventDateArray = JSON.parse(localStorage.getItem(`events`));
         let targetX = e.target.getBoundingClientRect().x,
             targetY = e.target.getBoundingClientRect().y;
         
@@ -16,18 +16,28 @@ function showSeacrInput() {
         closeModalForm(modalDayForm);
         closeModalForm(modalInfoForm);
         closeModalForm(modalQuickForm);
-        createInputEventList();
+        createInputEventList(eventDateArray);
+        triggerCell.forEach(elem => {
+            elem.classList.remove('calendar-table__cell_active');
+        });
+    });
 
-        // modalDayTrigger.forEach((e) => {
-        //     resetActiveClassCell(modalDayTrigger, e);
-        // });       
+    searchInput.addEventListener('input', (e) => {
+        let eventDateArray = JSON.parse(localStorage.getItem(`events`));
+        
+        createInputEventList(showSearchedEvent(eventDateArray));    
     });
 }
 
-function createInputEventList() {
+function showSearchedEvent(eventDateArray) {
+    return eventDateArray.filter(item => {
+        return item.dayEvent.indexOf(searchInput.value) > - 1 || item.dayDate.indexOf(searchInput.value) > - 1;
+   });
+}
+
+function createInputEventList(eventDateArray) {
     const inputWrapper = document.querySelector('.search-input__wrapper');
     inputWrapper.innerHTML = ``;
-    let eventDateArray = JSON.parse(localStorage.getItem(`events`));
 
     try {
         for (let i = 0; i < eventDateArray.length; i++) {

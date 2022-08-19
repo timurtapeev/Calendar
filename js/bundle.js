@@ -142,9 +142,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const header = document.querySelector('.header');
+
 function closeForms() {
     _variables__WEBPACK_IMPORTED_MODULE_1__.calendar.addEventListener('click', (event) => {
         let targetCell = event.target.closest('.calendar-table__cell');
+        let triggerCell = document.querySelectorAll('.calendar-table__cell_active');
         if (targetCell) {
 
         } else {
@@ -152,10 +154,14 @@ function closeForms() {
             (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalDayForm);
             (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalInfoForm);
             (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.searchForm);
+            triggerCell.forEach(elem => {
+                elem.classList.remove('calendar-table__cell_active');
+            });
         }
     });
     header.addEventListener('click', (e) => {
         let targetElem = e.target.closest('[data-headerBtn]');
+        let triggerCell = document.querySelectorAll('.calendar-table__cell_active');
         if (targetElem) {
             
         } else {
@@ -163,6 +169,9 @@ function closeForms() {
             (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalDayForm);
             (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalInfoForm);
             (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.searchForm);
+            triggerCell.forEach(elem => {
+                elem.classList.remove('calendar-table__cell_active');
+            });
         }
     });
 }
@@ -705,10 +714,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-// const modalDayTrigger = document.querySelectorAll('.calendar-table__cell');
-
 function showSeacrInput() {
     _variables__WEBPACK_IMPORTED_MODULE_1__.searchInput.addEventListener('click', (e) => {
+        let triggerCell = document.querySelectorAll('.calendar-table__cell_active');
+        let eventDateArray = JSON.parse(localStorage.getItem(`events`));
         let targetX = e.target.getBoundingClientRect().x,
             targetY = e.target.getBoundingClientRect().y;
         
@@ -720,18 +729,28 @@ function showSeacrInput() {
         (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalDayForm);
         (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalInfoForm);
         (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalQuickForm);
-        createInputEventList();
+        createInputEventList(eventDateArray);
+        triggerCell.forEach(elem => {
+            elem.classList.remove('calendar-table__cell_active');
+        });
+    });
 
-        // modalDayTrigger.forEach((e) => {
-        //     resetActiveClassCell(modalDayTrigger, e);
-        // });       
+    _variables__WEBPACK_IMPORTED_MODULE_1__.searchInput.addEventListener('input', (e) => {
+        let eventDateArray = JSON.parse(localStorage.getItem(`events`));
+        
+        createInputEventList(showSearchedEvent(eventDateArray));    
     });
 }
 
-function createInputEventList() {
+function showSearchedEvent(eventDateArray) {
+    return eventDateArray.filter(item => {
+        return item.dayEvent.indexOf(_variables__WEBPACK_IMPORTED_MODULE_1__.searchInput.value) > - 1 || item.dayDate.indexOf(_variables__WEBPACK_IMPORTED_MODULE_1__.searchInput.value) > - 1;
+   });
+}
+
+function createInputEventList(eventDateArray) {
     const inputWrapper = document.querySelector('.search-input__wrapper');
     inputWrapper.innerHTML = ``;
-    let eventDateArray = JSON.parse(localStorage.getItem(`events`));
 
     try {
         for (let i = 0; i < eventDateArray.length; i++) {
