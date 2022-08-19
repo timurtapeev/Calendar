@@ -47,6 +47,7 @@ function changeMonth() {
         (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_1__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_3__.modalDayForm);
         (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_1__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_3__.modalInfoForm);
         (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_1__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_3__.modalQuickForm);
+        (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_1__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_3__.searchForm);
         try {
             (0,_local_storage__WEBPACK_IMPORTED_MODULE_2__.getData)();
         } catch(e) {
@@ -63,6 +64,7 @@ function changeMonth() {
         (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_1__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_3__.modalDayForm);
         (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_1__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_3__.modalInfoForm);
         (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_1__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_3__.modalQuickForm);
+        (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_1__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_3__.searchForm);
         try {
             (0,_local_storage__WEBPACK_IMPORTED_MODULE_2__.getData)();
         } catch(e) {
@@ -79,6 +81,7 @@ function changeMonth() {
         (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_1__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_3__.modalDayForm);
         (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_1__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_3__.modalInfoForm);
         (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_1__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_3__.modalQuickForm);
+        (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_1__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_3__.searchForm);
         try {
             (0,_local_storage__WEBPACK_IMPORTED_MODULE_2__.getData)();
         } catch(e) {
@@ -647,31 +650,37 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _modal_day_form__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modal-day-form */ "./js/modules/modal-day-form.js");
 /* harmony import */ var _variables__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./variables */ "./js/modules/variables.js");
+/* harmony import */ var _local_storage__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./local-storage */ "./js/modules/local-storage.js");
 
 
 
-const searchInput = document.querySelector('[data-search-input]');
-const searchForm = document.querySelector('.search-input');
+
 const modalDayTrigger = document.querySelectorAll('.calendar-table__cell');
 
 function showSeacrInput() {
-    searchInput.addEventListener('click', (e) => {
+    _variables__WEBPACK_IMPORTED_MODULE_1__.searchInput.addEventListener('click', (e) => {
         let targetX = e.target.getBoundingClientRect().x,
-        targetY = e.target.getBoundingClientRect().y;
+             targetY = e.target.getBoundingClientRect().y;
 
         (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalDayForm);
         (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalInfoForm);
         (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalQuickForm);
-        modalDayTrigger.forEach((element) => {
+        modalDayTrigger.forEach((e) => {
             (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.resetActiveClassCell)(modalDayTrigger, e);
         });
     
-        searchForm.style.top = `${targetY + 30}px`;
-        searchForm.style.left = `${targetX}px`;
+        _variables__WEBPACK_IMPORTED_MODULE_1__.searchForm.style.top = `${targetY + 30}px`;
+        _variables__WEBPACK_IMPORTED_MODULE_1__.searchForm.style.left = `${targetX}px`;
 
-        searchForm.classList.add('show');
-        searchForm.classList.remove('hide');
+        _variables__WEBPACK_IMPORTED_MODULE_1__.searchForm.classList.add('show');
+        _variables__WEBPACK_IMPORTED_MODULE_1__.searchForm.classList.remove('hide');
+
+        createInputEventList();
     });
+}
+
+function createInputEventList() {
+    let eventDateArray = JSON.parse(localStorage.getItem(`events`));
 }
 
 
@@ -935,7 +944,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "modalQuickForm": () => (/* binding */ modalQuickForm),
 /* harmony export */   "monthes": () => (/* binding */ monthes),
 /* harmony export */   "refreshBtn": () => (/* binding */ refreshBtn),
-/* harmony export */   "refreshDeleteEventBtn": () => (/* binding */ refreshDeleteEventBtn)
+/* harmony export */   "refreshDeleteEventBtn": () => (/* binding */ refreshDeleteEventBtn),
+/* harmony export */   "searchForm": () => (/* binding */ searchForm),
+/* harmony export */   "searchInput": () => (/* binding */ searchInput)
 /* harmony export */ });
 let calendar = document.querySelector('.calendar'),
     dates = calendar.querySelector('.calendar-table__wrapper');
@@ -952,7 +963,9 @@ const modalDayForm = document.querySelector('.modal-day__form'),
     infoDoneBtn = document.querySelector('[data-done]'),
     refreshBtn = document.querySelector('[data-refreshEvent]'),
     deleteEventBtn = document.querySelector('[data-deleteEvent]'),
-    refreshDeleteEventBtn = document.querySelector('[data-delete]');
+    refreshDeleteEventBtn = document.querySelector('[data-delete]'),
+    searchInput = document.querySelector('[data-search-input]'),
+    searchForm = document.querySelector('.search-input');
 
 
 
@@ -1025,9 +1038,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_local_storage__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/local-storage */ "./js/modules/local-storage.js");
 /* harmony import */ var _modules_calendar_btns__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/calendar-btns */ "./js/modules/calendar-btns.js");
 /* harmony import */ var _modules_modal_quick_form__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/modal-quick-form */ "./js/modules/modal-quick-form.js");
-/* harmony import */ var _modules_modal_day_form__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/modal-day-form */ "./js/modules/modal-day-form.js");
-/* harmony import */ var _modules_variables__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/variables */ "./js/modules/variables.js");
-/* harmony import */ var _modules_search_input__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/search-input */ "./js/modules/search-input.js");
+/* harmony import */ var _modules_search_input__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/search-input */ "./js/modules/search-input.js");
+/* harmony import */ var _modules_modal_day_form__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/modal-day-form */ "./js/modules/modal-day-form.js");
+/* harmony import */ var _modules_variables__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/variables */ "./js/modules/variables.js");
 
 
 
@@ -1038,11 +1051,11 @@ __webpack_require__.r(__webpack_exports__);
 
 window.addEventListener('DOMContentLoaded', () => {
     (0,_modules_modal_quick_form__WEBPACK_IMPORTED_MODULE_3__.quickModalForm)();
+    (0,_modules_search_input__WEBPACK_IMPORTED_MODULE_4__.showSeacrInput)();
     (0,_modules_calendar_btns__WEBPACK_IMPORTED_MODULE_2__.changeMonth)();
-    (0,_modules_modal_day_form__WEBPACK_IMPORTED_MODULE_4__.showModalDayForm)();
-    (0,_modules_table__WEBPACK_IMPORTED_MODULE_0__.initCalendar)(_modules_calendar_btns__WEBPACK_IMPORTED_MODULE_2__.showedYear, _modules_calendar_btns__WEBPACK_IMPORTED_MODULE_2__.showedMonth, _modules_calendar_btns__WEBPACK_IMPORTED_MODULE_2__.current, _modules_variables__WEBPACK_IMPORTED_MODULE_5__.calendar);
+    (0,_modules_modal_day_form__WEBPACK_IMPORTED_MODULE_5__.showModalDayForm)();
+    (0,_modules_table__WEBPACK_IMPORTED_MODULE_0__.initCalendar)(_modules_calendar_btns__WEBPACK_IMPORTED_MODULE_2__.showedYear, _modules_calendar_btns__WEBPACK_IMPORTED_MODULE_2__.showedMonth, _modules_calendar_btns__WEBPACK_IMPORTED_MODULE_2__.current, _modules_variables__WEBPACK_IMPORTED_MODULE_6__.calendar);
     (0,_modules_local_storage__WEBPACK_IMPORTED_MODULE_1__.showLocalArray)();
-    (0,_modules_search_input__WEBPACK_IMPORTED_MODULE_6__.showSeacrInput)();
 });
 
 })();
