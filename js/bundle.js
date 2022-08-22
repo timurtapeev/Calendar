@@ -728,6 +728,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modal_day_form__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modal-day-form */ "./js/modules/modal-day-form.js");
 /* harmony import */ var _variables__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./variables */ "./js/modules/variables.js");
 /* harmony import */ var _calendar_btns__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./calendar-btns */ "./js/modules/calendar-btns.js");
+/* harmony import */ var _local_storage__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./local-storage */ "./js/modules/local-storage.js");
+
 
 
 
@@ -751,6 +753,7 @@ function showSeacrInput() {
         triggerCell.forEach(elem => {
             elem.classList.remove('calendar-table__cell_active');
         });
+
     });
     searchEventInput();
 }
@@ -769,9 +772,11 @@ function addClickForInputListEvent(elem) {
                 eventDate,
                 descr,
                 targetCell;
-            const eventDays = document.querySelectorAll('.calendar-table__cell_event');
+            const eventDays = document.querySelectorAll('.calendar-table__cell_event'),
+                  inputDate = document.querySelector('[data-dayInputDate]');
 
-            placeInfoForm(elem);
+
+            placeInfoForm(elem, _variables__WEBPACK_IMPORTED_MODULE_1__.modalInfoForm);
 
             if (eventName == targetName) {
 
@@ -795,6 +800,7 @@ function addClickForInputListEvent(elem) {
                 });
 
                 showInfoForm(eventDate, eventNames, eventTitle, targetCell);
+                showRefreshForm(elem, targetCell, targetDate, inputDate);
             }
         });
     });
@@ -811,43 +817,107 @@ function findTagetCell(eventDays, eventTitle, targetCell) {
     });
 }
 
-function placeInfoForm(elem) {
+function placeInfoForm(elem, form) {
     let targetX = elem.getBoundingClientRect().x,
-    targetY = elem.getBoundingClientRect().y;
+        targetY = elem.getBoundingClientRect().y;
 
-    _variables__WEBPACK_IMPORTED_MODULE_1__.modalInfoForm.classList.add('show');
-    _variables__WEBPACK_IMPORTED_MODULE_1__.modalInfoForm.classList.remove('hide');
+    form.classList.add('show');
+    form.classList.remove('hide');
 
     if (targetX > 730) {
-        _variables__WEBPACK_IMPORTED_MODULE_1__.modalInfoForm.style.left = `${targetX - 300}px`;
+        form.style.left = `${targetX - 300}px`;
     } else {
-        _variables__WEBPACK_IMPORTED_MODULE_1__.modalInfoForm.style.left = `${targetX + 143}px`;
+        form.style.left = `${targetX + 143}px`;
     }
 
-    _variables__WEBPACK_IMPORTED_MODULE_1__.modalInfoForm.style.top = `${targetY}px`;
+    form.style.top = `${targetY}px`;
 }
 
-function showInfoForm(infoDate, names, eventName, targetCell) {
+function showInfoForm(eventDate, eventNames, eventTitle, targetCell) {
     targetCell.classList.add('calendar-table__cell_active');
     (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalDayForm);
     (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalQuickForm);
     (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.searchForm);
-    showEventDate(infoDate);
-    showEvent(eventName);
-    showPeople(names);
+    showEventDate(eventDate);
+    showEvent(eventTitle);
+    showPeople(eventNames);
 
     //infoFormBtns
     
     closeEventBtnInInfoForm(targetCell);
-    // deleteEventBtnInInfoForm(modalDayTrigger, deleteTitle, deleteNames, targetCell, event);
-    // doneEventBtnInInfoForm(modalDayTrigger);
+    deleteEventBtnInInfoForm(targetCell, eventDate);
+    doneEventBtnInInfoForm(targetCell);
 }
 
-function closeEventBtnInInfoForm(targetCell, event) {
+function showRefreshForm(elem, targetCell, targetDate, inputDate) {
+    _variables__WEBPACK_IMPORTED_MODULE_1__.refreshBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        placeInfoForm(elem, _variables__WEBPACK_IMPORTED_MODULE_1__.modalDayForm);
+        (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalInfoForm);
+        (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalQuickForm);
+        (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.searchForm);
+        (0,_local_storage__WEBPACK_IMPORTED_MODULE_3__.postData)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalDayForm);
+        showEventDateRefreshBtn(targetDate, inputDate);
+
+        // refreshEventDeleteBtn
+        
+        _variables__WEBPACK_IMPORTED_MODULE_1__.refreshDeleteEventBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalInfoForm);
+            (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalDayForm);
+            (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.searchForm);
+            resetActiveClassCell(targetCell);
+            deleteEvent(targetCell, targetDate);
+        });
+    });
+}
+function showEventDateRefreshBtn(targetDate, inputDate) {
+    inputDate.value = targetDate;
+}
+
+function resetActiveClassCell(triggerCell) {
+    triggerCell.classList.remove('calendar-table__cell_active');
+}
+
+function deleteEventBtnInInfoForm(targetCell, eventDate) {
+    _variables__WEBPACK_IMPORTED_MODULE_1__.deleteEventBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalInfoForm);
+        resetActiveClassCell(targetCell);
+        deleteEvent(targetCell, eventDate);
+    });
+}
+
+function doneEventBtnInInfoForm(targetCell) {
+    _variables__WEBPACK_IMPORTED_MODULE_1__.infoDoneBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalInfoForm);
+        resetActiveClassCell(targetCell);
+    });
+}
+
+function closeEventBtnInInfoForm(targetCell) {
     _variables__WEBPACK_IMPORTED_MODULE_1__.modalInfoCloseBtn.addEventListener('click', () => {
         (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalInfoForm);
         targetCell.classList.remove('calendar-table__cell_active');
     });
+}
+
+function deleteEvent(targetCell, targetDate) {
+    const Title = targetCell.querySelector('.calendar-table__title'),
+          Members = targetCell.querySelector('.calendar-table__descr');
+
+    Title.textContent = '';
+    Members.textContent = '';
+
+    targetCell.classList.remove('calendar-table__cell_event');
+
+    for (let i = 0; i < _local_storage__WEBPACK_IMPORTED_MODULE_3__.localArray.length; i++) {
+        if (_local_storage__WEBPACK_IMPORTED_MODULE_3__.localArray[i].dayDate == targetDate) {
+            _local_storage__WEBPACK_IMPORTED_MODULE_3__.localArray.splice(i, 1);
+        }
+        localStorage.setItem('events', JSON.stringify(_local_storage__WEBPACK_IMPORTED_MODULE_3__.localArray));
+    }
 }
 
 function showEventDate(infoDate) {

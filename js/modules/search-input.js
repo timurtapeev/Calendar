@@ -1,7 +1,9 @@
 import {closeModalForm} from './modal-day-form';
 import {modalDayForm, modalInfoForm, modalQuickForm, 
-        searchInput, searchForm, modalDayCloseBtn, monthes, modalInfoCloseBtn} from './variables';
+        searchInput, searchForm, refreshDeleteEventBtn, monthes, 
+        modalInfoCloseBtn, infoDoneBtn, deleteEventBtn, refreshBtn} from './variables';
 import {showedMonth, showedYear} from './calendar-btns';
+import {localArray, postData} from './local-storage';
 
 function showSeacrInput() {
     searchInput.addEventListener('click', (e) => {
@@ -22,6 +24,7 @@ function showSeacrInput() {
         triggerCell.forEach(elem => {
             elem.classList.remove('calendar-table__cell_active');
         });
+
     });
     searchEventInput();
 }
@@ -40,9 +43,11 @@ function addClickForInputListEvent(elem) {
                 eventDate,
                 descr,
                 targetCell;
-            const eventDays = document.querySelectorAll('.calendar-table__cell_event');
+            const eventDays = document.querySelectorAll('.calendar-table__cell_event'),
+                  inputDate = document.querySelector('[data-dayInputDate]');
 
-            placeInfoForm(elem);
+
+            placeInfoForm(elem, modalInfoForm);
 
             if (eventName == targetName) {
 
@@ -66,6 +71,7 @@ function addClickForInputListEvent(elem) {
                 });
 
                 showInfoForm(eventDate, eventNames, eventTitle, targetCell);
+                showRefreshForm(elem, targetCell, targetDate, inputDate);
             }
         });
     });
@@ -82,43 +88,107 @@ function findTagetCell(eventDays, eventTitle, targetCell) {
     });
 }
 
-function placeInfoForm(elem) {
+function placeInfoForm(elem, form) {
     let targetX = elem.getBoundingClientRect().x,
-    targetY = elem.getBoundingClientRect().y;
+        targetY = elem.getBoundingClientRect().y;
 
-    modalInfoForm.classList.add('show');
-    modalInfoForm.classList.remove('hide');
+    form.classList.add('show');
+    form.classList.remove('hide');
 
     if (targetX > 730) {
-        modalInfoForm.style.left = `${targetX - 300}px`;
+        form.style.left = `${targetX - 300}px`;
     } else {
-        modalInfoForm.style.left = `${targetX + 143}px`;
+        form.style.left = `${targetX + 143}px`;
     }
 
-    modalInfoForm.style.top = `${targetY}px`;
+    form.style.top = `${targetY}px`;
 }
 
-function showInfoForm(infoDate, names, eventName, targetCell) {
+function showInfoForm(eventDate, eventNames, eventTitle, targetCell) {
     targetCell.classList.add('calendar-table__cell_active');
     closeModalForm(modalDayForm);
     closeModalForm(modalQuickForm);
     closeModalForm(searchForm);
-    showEventDate(infoDate);
-    showEvent(eventName);
-    showPeople(names);
+    showEventDate(eventDate);
+    showEvent(eventTitle);
+    showPeople(eventNames);
 
     //infoFormBtns
     
     closeEventBtnInInfoForm(targetCell);
-    // deleteEventBtnInInfoForm(modalDayTrigger, deleteTitle, deleteNames, targetCell, event);
-    // doneEventBtnInInfoForm(modalDayTrigger);
+    deleteEventBtnInInfoForm(targetCell, eventDate);
+    doneEventBtnInInfoForm(targetCell);
 }
 
-function closeEventBtnInInfoForm(targetCell, event) {
+function showRefreshForm(elem, targetCell, targetDate, inputDate) {
+    refreshBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        placeInfoForm(elem, modalDayForm);
+        closeModalForm(modalInfoForm);
+        closeModalForm(modalQuickForm);
+        closeModalForm(searchForm);
+        postData(modalDayForm);
+        showEventDateRefreshBtn(targetDate, inputDate);
+
+        // refreshEventDeleteBtn
+        
+        refreshDeleteEventBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeModalForm(modalInfoForm);
+            closeModalForm(modalDayForm);
+            closeModalForm(searchForm);
+            resetActiveClassCell(targetCell);
+            deleteEvent(targetCell, targetDate);
+        });
+    });
+}
+function showEventDateRefreshBtn(targetDate, inputDate) {
+    inputDate.value = targetDate;
+}
+
+function resetActiveClassCell(triggerCell) {
+    triggerCell.classList.remove('calendar-table__cell_active');
+}
+
+function deleteEventBtnInInfoForm(targetCell, eventDate) {
+    deleteEventBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeModalForm(modalInfoForm);
+        resetActiveClassCell(targetCell);
+        deleteEvent(targetCell, eventDate);
+    });
+}
+
+function doneEventBtnInInfoForm(targetCell) {
+    infoDoneBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeModalForm(modalInfoForm);
+        resetActiveClassCell(targetCell);
+    });
+}
+
+function closeEventBtnInInfoForm(targetCell) {
     modalInfoCloseBtn.addEventListener('click', () => {
         closeModalForm(modalInfoForm);
         targetCell.classList.remove('calendar-table__cell_active');
     });
+}
+
+function deleteEvent(targetCell, targetDate) {
+    const Title = targetCell.querySelector('.calendar-table__title'),
+          Members = targetCell.querySelector('.calendar-table__descr');
+
+    Title.textContent = '';
+    Members.textContent = '';
+
+    targetCell.classList.remove('calendar-table__cell_event');
+
+    for (let i = 0; i < localArray.length; i++) {
+        if (localArray[i].dayDate == targetDate) {
+            localArray.splice(i, 1);
+        }
+        localStorage.setItem('events', JSON.stringify(localArray));
+    }
 }
 
 function showEventDate(infoDate) {
