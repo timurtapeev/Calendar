@@ -15,7 +15,9 @@ const modalDayForm = document.querySelector('.modal-day__form'),
     deleteEventBtn = document.querySelector('[data-deleteEvent]'),
     refreshDeleteEventBtn = document.querySelector('[data-delete]'),
     searchInput = document.querySelector('[data-search-input]'),
-    searchForm = document.querySelector('.search-input');
+    searchForm = document.querySelector('.search-input'),
+    modalDayTrigger = document.querySelectorAll('.calendar-table__cell');
 
 export {calendar, modalDayForm, modalInfoForm, dates, modalQuickForm, modalDayCloseBtn, modalInfoCloseBtn, monthes,
-        infoDate, infoDoneBtn, refreshBtn, deleteEventBtn, refreshDeleteEventBtn, searchInput, searchForm};
+        infoDate, infoDoneBtn, refreshBtn, deleteEventBtn, refreshDeleteEventBtn, 
+        searchInput, searchForm, modalDayTrigger};

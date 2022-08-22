@@ -13,12 +13,8 @@ function showModalDayForm() {
             let targetCell = event.target.closest('.calendar-table__cell');
 
             if (targetCell.classList.contains('calendar-table__cell_event')) {
-                
-                //showInfoForm
-
                 let deleteTitle,
                     deleteNames;
-
                 if (event.target.classList.contains('calendar-table__cell_event')) {
                     deleteTitle = event.target.querySelector('.calendar-table__title');
                     deleteNames = event.target.querySelector('.calendar-table__descr');
@@ -27,78 +23,92 @@ function showModalDayForm() {
                     deleteNames = targetCell.querySelector('.calendar-table__descr');
                 }
 
-                placeModalDayForm(event, modalDayTrigger, modalInfoForm);
-                closeModalForm(modalDayForm);
-                closeModalForm(modalQuickForm);
-                closeModalForm(searchForm);
-                showEventDate(event, infoDate);
-                showEvent(event, targetCell);
-                showPeople(event, targetCell);
-
-                //CloseInfoFrom
-
-                modalInfoCloseBtn.addEventListener('click', () => {
-                    closeModalForm(modalInfoForm);
-                    if (event.target.classList.contains('calendar-table__cell_event')) {
-                        event.target.classList.remove('calendar-table__cell_active');
-                    } else {
-                        targetCell.classList.remove('calendar-table__cell_active');
-                    }
-                    
-                });
-
-                //deleteEventInfoForm
-
-                deleteEventBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    closeModalForm(modalInfoForm);
-                    resetActiveClassCell(modalDayTrigger, e);
-                    deleteEvent(deleteTitle, deleteNames, targetCell, event);
-                });
-
-                infoDoneBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    closeModalForm(modalInfoForm);
-                    resetActiveClassCell(modalDayTrigger, e);
-                });
-
-                //RefreshForm
-
-                refreshBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    let targetDate,
-                        targetDates;
-                    placeModalDayForm(event, modalDayTrigger, modalDayForm);
-                    closeModalForm(modalInfoForm);
-                    closeModalForm(modalQuickForm);
-                    closeModalForm(searchForm);
-                    postData(modalDayForm);
-                    showEventDateRefreshBtn(targetDate, targetCell, targetDates, inputDate, event);
-
-                    // refreshEventDeleteBtn
-                    
-                    refreshDeleteEventBtn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        closeModalForm(modalInfoForm);
-                        closeModalForm(modalDayForm);
-                        closeModalForm(searchForm);
-                        resetActiveClassCell(modalDayTrigger, e);
-                        deleteEvent(deleteTitle, deleteNames, targetCell, event);
-                    });
-                });
+                showInfoForm(event, modalDayTrigger, targetCell, deleteTitle, deleteNames);
+                showRefreshForm(event, modalDayTrigger, targetCell, inputDate, deleteTitle, deleteNames);
             } else {
-
-                //addNewEvent
-
-                placeModalDayForm(event, modalDayTrigger, modalDayForm);
-                closeModalForm(modalInfoForm);
-                closeModalForm(modalQuickForm);
-                closeModalForm(searchForm);
-                showEventDate(event, inputDate);
-                resetActiveClassCell(modalDayTrigger, event);
-                postData(modalDayForm);
+                addNewEvent(event, modalDayTrigger, inputDate);
             }
         });
+    });
+}
+
+function showInfoForm(event, modalDayTrigger, targetCell, deleteTitle, deleteNames) {
+    placeModalDayForm(event, modalDayTrigger, modalInfoForm);
+    closeModalForm(modalDayForm);
+    closeModalForm(modalQuickForm);
+    closeModalForm(searchForm);
+    showEventDate(event, infoDate);
+    showEvent(event, targetCell);
+    showPeople(event, targetCell);
+
+    //infoFormBtns
+    
+    closeEventBtnInInfoForm(targetCell, event);
+    deleteEventBtnInInfoForm(modalDayTrigger, deleteTitle, deleteNames, targetCell, event);
+    doneEventBtnInInfoForm(modalDayTrigger);
+}
+
+function showRefreshForm(event, modalDayTrigger, targetCell, inputDate, deleteTitle, deleteNames) {
+    refreshBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        let targetDate,
+            targetDates;
+        placeModalDayForm(event, modalDayTrigger, modalDayForm);
+        closeModalForm(modalInfoForm);
+        closeModalForm(modalQuickForm);
+        closeModalForm(searchForm);
+        postData(modalDayForm);
+        showEventDateRefreshBtn(targetDate, targetCell, targetDates, inputDate, event);
+
+        // refreshEventDeleteBtn
+        
+        refreshDeleteEventBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeModalForm(modalInfoForm);
+            closeModalForm(modalDayForm);
+            closeModalForm(searchForm);
+            resetActiveClassCell(modalDayTrigger, e);
+            deleteEvent(deleteTitle, deleteNames, targetCell, event);
+        });
+    });
+}
+
+function addNewEvent(event, modalDayTrigger, inputDate) {
+    placeModalDayForm(event, modalDayTrigger, modalDayForm);
+    closeModalForm(modalInfoForm);
+    closeModalForm(modalQuickForm);
+    closeModalForm(searchForm);
+    showEventDate(event, inputDate);
+    resetActiveClassCell(modalDayTrigger, event);
+    postData(modalDayForm);
+}
+
+function deleteEventBtnInInfoForm(modalDayTrigger, deleteTitle, deleteNames, targetCell, event) {
+    deleteEventBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeModalForm(modalInfoForm);
+        resetActiveClassCell(modalDayTrigger, e);
+        deleteEvent(deleteTitle, deleteNames, targetCell, event);
+    });
+}
+
+function doneEventBtnInInfoForm(modalDayTrigger) {
+    infoDoneBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeModalForm(modalInfoForm);
+        resetActiveClassCell(modalDayTrigger, e);
+    });
+}
+
+function closeEventBtnInInfoForm(targetCell, event) {
+    modalInfoCloseBtn.addEventListener('click', () => {
+        closeModalForm(modalInfoForm);
+        if (event.target.classList.contains('calendar-table__cell_event')) {
+            event.target.classList.remove('calendar-table__cell_active');
+        } else {
+            targetCell.classList.remove('calendar-table__cell_active');
+        }
+        
     });
 }
 
@@ -275,4 +285,5 @@ function getTriggerCell(element) {
     
 }
 
-export {showModalDayForm, closeModalForm, resetActiveClassCell};
+export {showModalDayForm, closeModalForm, resetActiveClassCell, showInfoForm, showRefreshForm, 
+        addNewEvent, showEventDate, showEvent, showPeople};
