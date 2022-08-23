@@ -110,6 +110,7 @@ function showInfoForm(eventDate, eventNames, eventTitle, targetCell) {
     closeModalForm(modalQuickForm);
     closeModalForm(searchForm);
     showEventDate(eventDate);
+    closeModalForm(searchForm);
     showEvent(eventTitle);
     showPeople(eventNames);
 

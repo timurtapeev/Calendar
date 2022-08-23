@@ -35,6 +35,15 @@ function postData(form) {
             dayDescr: dayInputDescr.value
         };
 
+        for (let i = 0; i < localArray.length; i++ ) {
+            console.log(localArray[i].dayDate, event.dayDate);
+            if (localArray[i].dayDate == event.dayDate) {
+                localArray.splice(i, 1);
+                localStorage.setItem('events', JSON.stringify(localArray));
+                break;
+            }
+        }
+
         localArray.push(event);
         localStorage.setItem('events', JSON.stringify(localArray));
 
@@ -43,6 +52,7 @@ function postData(form) {
         });
         closeModalForm(modalDayForm);
         closeModalForm(modalInfoForm);
+
         try {
             getData();
         } catch(e) {

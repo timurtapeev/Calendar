@@ -235,6 +235,15 @@ function postData(form) {
             dayDescr: dayInputDescr.value
         };
 
+        for (let i = 0; i < localArray.length; i++ ) {
+            console.log(localArray[i].dayDate, event.dayDate);
+            if (localArray[i].dayDate == event.dayDate) {
+                localArray.splice(i, 1);
+                localStorage.setItem('events', JSON.stringify(localArray));
+                break;
+            }
+        }
+
         localArray.push(event);
         localStorage.setItem('events', JSON.stringify(localArray));
 
@@ -243,6 +252,7 @@ function postData(form) {
         });
         (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_1__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_4__.modalDayForm);
         (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_1__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_4__.modalInfoForm);
+
         try {
             getData();
         } catch(e) {
@@ -839,6 +849,7 @@ function showInfoForm(eventDate, eventNames, eventTitle, targetCell) {
     (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalQuickForm);
     (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.searchForm);
     showEventDate(eventDate);
+    (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.searchForm);
     showEvent(eventTitle);
     showPeople(eventNames);
 
