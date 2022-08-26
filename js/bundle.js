@@ -11,6 +11,7 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "changeMonth": () => (/* binding */ changeMonth),
+/* harmony export */   "changeShowDate": () => (/* binding */ changeShowDate),
 /* harmony export */   "current": () => (/* binding */ current),
 /* harmony export */   "showedDate": () => (/* binding */ showedDate),
 /* harmony export */   "showedMonth": () => (/* binding */ showedMonth),
@@ -120,6 +121,12 @@ function changeMonth() {
             return month + 1;
         }
     }
+}
+
+function changeShowDate(month, year) {
+    showedMonth = month;
+    showedYear = year;
+    (0,_table__WEBPACK_IMPORTED_MODULE_0__.initCalendar)(showedYear, showedMonth, current, _variables__WEBPACK_IMPORTED_MODULE_3__.calendar);
 }
 
 
@@ -771,56 +778,79 @@ function showSeacrInput() {
 function addClickForInputListEvent(elem) {
     elem.addEventListener('click', () => {
         let targetName = elem.querySelector('.search-input__event').innerText,
-            targetDate = elem.querySelector('.search-input__date').innerText;
-        const eventCells = document.querySelectorAll('.calendar-table__cell_event');
+            targetDate = elem.querySelector('.search-input__date').innerText,
+            realMonthNumber;
+        let eventCells = document.querySelectorAll('.calendar-table__cell_event');
+        let eventDateArray = JSON.parse(localStorage.getItem(`events`));
+
+        if(_calendar_btns__WEBPACK_IMPORTED_MODULE_2__.showedMonth < 9) {
+            realMonthNumber = `0${_calendar_btns__WEBPACK_IMPORTED_MODULE_2__.showedMonth + 1}`;
+        } else {
+            realMonthNumber = _calendar_btns__WEBPACK_IMPORTED_MODULE_2__.showedMonth + 1;
+        }
 
         eventCells.forEach(elem => {
-            let eventName = elem.querySelector('.calendar-table__title').innerText;
-            let eventDateArray = JSON.parse(localStorage.getItem(`events`));
+            let eventDay = elem.querySelector('.calendar-table__header').innerText;
             let eventTitle,
                 eventNames,
                 eventDate,
                 descr,
                 targetCell;
-            const eventDays = document.querySelectorAll('.calendar-table__cell_event'),
-                  inputDate = document.querySelector('[data-dayInputDate]');
+            const inputDate = document.querySelector('[data-dayInputDate]');
 
+            if (targetDate.slice(0, 2) == eventDay.replace(/\D/g, '') &&
+                _calendar_btns__WEBPACK_IMPORTED_MODULE_2__.showedYear == targetDate.slice(6, 10) &&
+                realMonthNumber == targetDate.slice(3, 5)) {
 
-            placeInfoForm(elem, _variables__WEBPACK_IMPORTED_MODULE_1__.modalInfoForm);
+                showEventInSearchInput(eventDateArray, targetName, targetDate, 
+                    eventTitle, eventNames, eventDate, descr ,targetCell, elem, inputDate);
+            } else if (_calendar_btns__WEBPACK_IMPORTED_MODULE_2__.showedYear !== targetDate.slice(6, 10) && realMonthNumber !== targetDate.slice(3, 5)) {
+                let showTargetYear = +targetDate.slice(6, 10),
+                    showTargetMonth = +targetDate.slice(3, 5) - 1;
 
-            if (eventName == targetName) {
+                (0,_calendar_btns__WEBPACK_IMPORTED_MODULE_2__.changeShowDate)(showTargetMonth, showTargetYear);
 
-                for (let i = 0; i < eventDateArray.length; i++ ) {
-                    if (eventDateArray[i].dayEvent == targetName) {
-                        eventTitle = eventDateArray[i].dayEvent;
-                        eventNames = eventDateArray[i].dayName;
-                        eventDate = eventDateArray[i].dayDate;
-                        descr = eventDateArray[i].dayDescr;
+                try {
+                    (0,_local_storage__WEBPACK_IMPORTED_MODULE_3__.getData)();
+                } catch(e) {
 
-                    }
-                }
+                }                
 
-                findTagetCell(eventDays, eventTitle, targetCell);
-                eventDays.forEach(e => {
-                    let targetCellTitle = e.querySelector('.calendar-table__title').innerText;
+                let eventCells = document.querySelectorAll('.calendar-table__cell_event');
+                eventCells.forEach(elem => {
+                    let eventDay = elem.querySelector('.calendar-table__header').innerText;
 
-                    if (targetCellTitle == eventTitle) {
-                        targetCell = e.closest('.calendar-table__cell');
+                    if (targetDate.slice(0, 2) == eventDay.replace(/\D/g, '')) {
+                        showEventInSearchInput(eventDateArray, targetName, targetDate, 
+                            eventTitle, eventNames, eventDate, descr ,targetCell, elem, inputDate);
                     }
                 });
-
-                showInfoForm(eventDate, eventNames, eventTitle, targetCell);
-                showRefreshForm(elem, targetCell, targetDate, inputDate);
             }
         });
     });
 }
 
-function findTagetCell(eventDays, eventTitle, targetCell) {
-    eventDays.forEach(e => {
-        let targetCellTitle = e.querySelector('.calendar-table__title').innerText;
+function showEventInSearchInput(array, targetName, targetDate, title, members, date, descr ,cell, elem, inputDate) {
+    for (let i = 0; i < array.length; i++ ) {
+        if (array[i].dayEvent == targetName && targetDate == array[i].dayDate) {
+            title = array[i].dayEvent;
+            members = array[i].dayName;
+            date = array[i].dayDate;
+            descr = array[i].dayDescr;
+            cell = elem.closest('.calendar-table__cell');
+        }
+    }
 
-        if (targetCellTitle == eventTitle) {
+    console.log(title, members, date, cell);
+
+    showInfoForm(date, members, title, cell);
+    showRefreshForm(elem, cell, targetDate, inputDate);
+    placeInfoForm(elem, _variables__WEBPACK_IMPORTED_MODULE_1__.modalInfoForm);
+}
+
+function findTagetCell(eventDays, eventTitle, targetCell, eventName) {
+    eventDays.forEach(e => {
+        if (eventName == eventTitle) {
             targetCell = e.closest('.calendar-table__cell');
             return targetCell;
         }

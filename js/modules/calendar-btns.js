@@ -100,4 +100,10 @@ function changeMonth() {
     }
 }
 
-export {changeMonth, showedYear, showedMonth, showedDate, current};
+function changeShowDate(month, year) {
+    showedMonth = month;
+    showedYear = year;
+    initCalendar(showedYear, showedMonth, current, calendar);
+}
+
+export {changeMonth, showedYear, showedMonth, showedDate, current, changeShowDate};

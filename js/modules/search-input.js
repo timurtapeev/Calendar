@@ -2,8 +2,8 @@ import {closeModalForm} from './modal-day-form';
 import {modalDayForm, modalInfoForm, modalQuickForm, 
         searchInput, searchForm, refreshDeleteEventBtn, monthes, 
         modalInfoCloseBtn, infoDoneBtn, deleteEventBtn, refreshBtn} from './variables';
-import {showedMonth, showedYear} from './calendar-btns';
-import {localArray, postData} from './local-storage';
+import {showedMonth, showedYear, changeShowDate} from './calendar-btns';
+import {localArray, postData, getData} from './local-storage';
 
 function showSeacrInput() {
     searchInput.addEventListener('click', (e) => {
@@ -32,56 +32,79 @@ function showSeacrInput() {
 function addClickForInputListEvent(elem) {
     elem.addEventListener('click', () => {
         let targetName = elem.querySelector('.search-input__event').innerText,
-            targetDate = elem.querySelector('.search-input__date').innerText;
-        const eventCells = document.querySelectorAll('.calendar-table__cell_event');
+            targetDate = elem.querySelector('.search-input__date').innerText,
+            realMonthNumber;
+        let eventCells = document.querySelectorAll('.calendar-table__cell_event');
+        let eventDateArray = JSON.parse(localStorage.getItem(`events`));
+
+        if(showedMonth < 9) {
+            realMonthNumber = `0${showedMonth + 1}`;
+        } else {
+            realMonthNumber = showedMonth + 1;
+        }
 
         eventCells.forEach(elem => {
-            let eventName = elem.querySelector('.calendar-table__title').innerText;
-            let eventDateArray = JSON.parse(localStorage.getItem(`events`));
+            let eventDay = elem.querySelector('.calendar-table__header').innerText;
             let eventTitle,
                 eventNames,
                 eventDate,
                 descr,
                 targetCell;
-            const eventDays = document.querySelectorAll('.calendar-table__cell_event'),
-                  inputDate = document.querySelector('[data-dayInputDate]');
+            const inputDate = document.querySelector('[data-dayInputDate]');
 
+            if (targetDate.slice(0, 2) == eventDay.replace(/\D/g, '') &&
+                showedYear == targetDate.slice(6, 10) &&
+                realMonthNumber == targetDate.slice(3, 5)) {
 
-            placeInfoForm(elem, modalInfoForm);
+                showEventInSearchInput(eventDateArray, targetName, targetDate, 
+                    eventTitle, eventNames, eventDate, descr ,targetCell, elem, inputDate);
+            } else if (showedYear !== targetDate.slice(6, 10) && realMonthNumber !== targetDate.slice(3, 5)) {
+                let showTargetYear = +targetDate.slice(6, 10),
+                    showTargetMonth = +targetDate.slice(3, 5) - 1;
 
-            if (eventName == targetName) {
+                changeShowDate(showTargetMonth, showTargetYear);
 
-                for (let i = 0; i < eventDateArray.length; i++ ) {
-                    if (eventDateArray[i].dayEvent == targetName) {
-                        eventTitle = eventDateArray[i].dayEvent;
-                        eventNames = eventDateArray[i].dayName;
-                        eventDate = eventDateArray[i].dayDate;
-                        descr = eventDateArray[i].dayDescr;
+                try {
+                    getData();
+                } catch(e) {
 
-                    }
-                }
+                }                
 
-                findTagetCell(eventDays, eventTitle, targetCell);
-                eventDays.forEach(e => {
-                    let targetCellTitle = e.querySelector('.calendar-table__title').innerText;
+                let eventCells = document.querySelectorAll('.calendar-table__cell_event');
+                eventCells.forEach(elem => {
+                    let eventDay = elem.querySelector('.calendar-table__header').innerText;
 
-                    if (targetCellTitle == eventTitle) {
-                        targetCell = e.closest('.calendar-table__cell');
+                    if (targetDate.slice(0, 2) == eventDay.replace(/\D/g, '')) {
+                        showEventInSearchInput(eventDateArray, targetName, targetDate, 
+                            eventTitle, eventNames, eventDate, descr ,targetCell, elem, inputDate);
                     }
                 });
-
-                showInfoForm(eventDate, eventNames, eventTitle, targetCell);
-                showRefreshForm(elem, targetCell, targetDate, inputDate);
             }
         });
     });
 }
 
-function findTagetCell(eventDays, eventTitle, targetCell) {
-    eventDays.forEach(e => {
-        let targetCellTitle = e.querySelector('.calendar-table__title').innerText;
+function showEventInSearchInput(array, targetName, targetDate, title, members, date, descr ,cell, elem, inputDate) {
+    for (let i = 0; i < array.length; i++ ) {
+        if (array[i].dayEvent == targetName && targetDate == array[i].dayDate) {
+            title = array[i].dayEvent;
+            members = array[i].dayName;
+            date = array[i].dayDate;
+            descr = array[i].dayDescr;
+            cell = elem.closest('.calendar-table__cell');
+        }
+    }
 
-        if (targetCellTitle == eventTitle) {
+    console.log(title, members, date, cell);
+
+    showInfoForm(date, members, title, cell);
+    showRefreshForm(elem, cell, targetDate, inputDate);
+    placeInfoForm(elem, modalInfoForm);
+}
+
+function findTagetCell(eventDays, eventTitle, targetCell, eventName) {
+    eventDays.forEach(e => {
+        if (eventName == eventTitle) {
             targetCell = e.closest('.calendar-table__cell');
             return targetCell;
         }
