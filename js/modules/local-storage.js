@@ -36,7 +36,6 @@ function postData(form) {
         };
 
         for (let i = 0; i < localArray.length; i++ ) {
-            console.log(localArray[i].dayDate, event.dayDate);
             if (localArray[i].dayDate == event.dayDate) {
                 localArray.splice(i, 1);
                 localStorage.setItem('events', JSON.stringify(localArray));

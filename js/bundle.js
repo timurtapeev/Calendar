@@ -243,7 +243,6 @@ function postData(form) {
         };
 
         for (let i = 0; i < localArray.length; i++ ) {
-            console.log(localArray[i].dayDate, event.dayDate);
             if (localArray[i].dayDate == event.dayDate) {
                 localArray.splice(i, 1);
                 localStorage.setItem('events', JSON.stringify(localArray));
@@ -319,14 +318,13 @@ function getData() {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "addDots": () => (/* binding */ addDots),
 /* harmony export */   "addNewEvent": () => (/* binding */ addNewEvent),
 /* harmony export */   "closeModalForm": () => (/* binding */ closeModalForm),
 /* harmony export */   "resetActiveClassCell": () => (/* binding */ resetActiveClassCell),
-/* harmony export */   "showEvent": () => (/* binding */ showEvent),
 /* harmony export */   "showEventDate": () => (/* binding */ showEventDate),
 /* harmony export */   "showInfoForm": () => (/* binding */ showInfoForm),
 /* harmony export */   "showModalDayForm": () => (/* binding */ showModalDayForm),
-/* harmony export */   "showPeople": () => (/* binding */ showPeople),
 /* harmony export */   "showRefreshForm": () => (/* binding */ showRefreshForm)
 /* harmony export */ });
 /* harmony import */ var _calendar_btns__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./calendar-btns */ "./js/modules/calendar-btns.js");
@@ -345,18 +343,44 @@ function showModalDayForm() {
             let targetCell = event.target.closest('.calendar-table__cell');
 
             if (targetCell.classList.contains('calendar-table__cell_event')) {
-                let deleteTitle,
-                    deleteNames;
+                let eventDateArray = JSON.parse(localStorage.getItem(`events`));
+                let eventTitle,
+                    eventNames,
+                    eventDescr,
+                    realMonthNumber,
+                    targetDate,
+                    targetDay;
                 if (event.target.classList.contains('calendar-table__cell_event')) {
-                    deleteTitle = event.target.querySelector('.calendar-table__title');
-                    deleteNames = event.target.querySelector('.calendar-table__descr');
+                    targetDay = event.target.querySelector('.calendar-table__header').innerText.replace(/\D/g, '');
                 } else {
-                    deleteTitle = targetCell.querySelector('.calendar-table__title');
-                    deleteNames = targetCell.querySelector('.calendar-table__descr');
+                    targetDay = targetCell.querySelector('.calendar-table__header').innerText.replace(/\D/g, '');
+                }
+                console.log(targetDay);
+                if(_calendar_btns__WEBPACK_IMPORTED_MODULE_0__.showedMonth < 9) {
+                    realMonthNumber = `0${_calendar_btns__WEBPACK_IMPORTED_MODULE_0__.showedMonth + 1}`;
+                } else {
+                    realMonthNumber = _calendar_btns__WEBPACK_IMPORTED_MODULE_0__.showedMonth + 1;
                 }
 
-                showInfoForm(event, modalDayTrigger, targetCell, deleteTitle, deleteNames);
-                showRefreshForm(event, modalDayTrigger, targetCell, inputDate, deleteTitle, deleteNames);
+                if(targetDay < 10) {
+                    targetDay = `0${targetDay}`;
+                }
+
+                targetDate = `${targetDay}.${realMonthNumber}.${_calendar_btns__WEBPACK_IMPORTED_MODULE_0__.showedYear}`;
+
+                for (let i = 0; i < eventDateArray.length; i++) {
+                    
+                    if (eventDateArray[i].dayDate == targetDate) {
+                        eventTitle = eventDateArray[i].dayEvent;
+                        eventNames = eventDateArray[i].dayName;
+                        eventDescr = eventDateArray[i].dayDescr;
+
+                        break;
+                    }
+                }
+
+                showInfoForm(event, modalDayTrigger, targetCell, eventTitle, eventNames, targetDate);
+                showRefreshForm(event, modalDayTrigger, targetCell, inputDate, targetDate);
             } else {
                 addNewEvent(event, modalDayTrigger, inputDate);
             }
@@ -364,33 +388,33 @@ function showModalDayForm() {
     });
 }
 
-function showInfoForm(event, modalDayTrigger, targetCell, deleteTitle, deleteNames) {
+function showInfoForm(event, modalDayTrigger, targetCell, eventTitle, eventNames, targetDate) {
     placeModalDayForm(event, modalDayTrigger, _variables__WEBPACK_IMPORTED_MODULE_2__.modalInfoForm);
     closeModalForm(_variables__WEBPACK_IMPORTED_MODULE_2__.modalDayForm);
     closeModalForm(_variables__WEBPACK_IMPORTED_MODULE_2__.modalQuickForm);
     closeModalForm(_variables__WEBPACK_IMPORTED_MODULE_2__.searchForm);
-    showEventDate(event, _variables__WEBPACK_IMPORTED_MODULE_2__.infoDate);
-    showEvent(event, targetCell);
-    showPeople(event, targetCell);
+    showEventDate(event, _variables__WEBPACK_IMPORTED_MODULE_2__.infoDate, targetDate);
+    showEvent(eventTitle);
+    showPeople(eventNames);
 
     //infoFormBtns
     
     closeEventBtnInInfoForm(targetCell, event);
-    deleteEventBtnInInfoForm(modalDayTrigger, deleteTitle, deleteNames, targetCell, event);
+    deleteEventBtnInInfoForm(modalDayTrigger, targetCell, event, targetDate);
     doneEventBtnInInfoForm(modalDayTrigger);
 }
 
-function showRefreshForm(event, modalDayTrigger, targetCell, inputDate, deleteTitle, deleteNames) {
+function showRefreshForm(event, modalDayTrigger, targetCell, inputDate, targetDate) {
     _variables__WEBPACK_IMPORTED_MODULE_2__.refreshBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        let targetDate,
+        let date,
             targetDates;
         placeModalDayForm(event, modalDayTrigger, _variables__WEBPACK_IMPORTED_MODULE_2__.modalDayForm);
         closeModalForm(_variables__WEBPACK_IMPORTED_MODULE_2__.modalInfoForm);
         closeModalForm(_variables__WEBPACK_IMPORTED_MODULE_2__.modalQuickForm);
         closeModalForm(_variables__WEBPACK_IMPORTED_MODULE_2__.searchForm);
         (0,_local_storage__WEBPACK_IMPORTED_MODULE_1__.postData)(_variables__WEBPACK_IMPORTED_MODULE_2__.modalDayForm);
-        showEventDateRefreshBtn(targetDate, targetCell, targetDates, inputDate, event);
+        showEventDateRefreshBtn(date, targetCell, targetDates, inputDate, event);
 
         // refreshEventDeleteBtn
         
@@ -400,7 +424,7 @@ function showRefreshForm(event, modalDayTrigger, targetCell, inputDate, deleteTi
             closeModalForm(_variables__WEBPACK_IMPORTED_MODULE_2__.modalDayForm);
             closeModalForm(_variables__WEBPACK_IMPORTED_MODULE_2__.searchForm);
             resetActiveClassCell(modalDayTrigger, e);
-            deleteEvent(deleteTitle, deleteNames, targetCell, event);
+            deleteEvent(modalDayTrigger, targetCell, event, targetDate);
         });
     });
 }
@@ -415,12 +439,12 @@ function addNewEvent(event, modalDayTrigger, inputDate) {
     (0,_local_storage__WEBPACK_IMPORTED_MODULE_1__.postData)(_variables__WEBPACK_IMPORTED_MODULE_2__.modalDayForm);
 }
 
-function deleteEventBtnInInfoForm(modalDayTrigger, deleteTitle, deleteNames, targetCell, event) {
+function deleteEventBtnInInfoForm(modalDayTrigger, targetCell, event, targetDate) {
     _variables__WEBPACK_IMPORTED_MODULE_2__.deleteEventBtn.addEventListener('click', (e) => {
         e.preventDefault();
         closeModalForm(_variables__WEBPACK_IMPORTED_MODULE_2__.modalInfoForm);
         resetActiveClassCell(modalDayTrigger, e);
-        deleteEvent(deleteTitle, deleteNames, targetCell, event);
+        deleteEvent(targetCell, event, targetDate);
     });
 }
 
@@ -468,41 +492,25 @@ function showEventDateRefreshBtn(targetDate, targetCell, targetDates, inputDate,
     inputDate.value = targetDates;
 }
 
-function deleteEvent(deleteTitle, deleteNames, targetCell, event) {
-    deleteTitle.textContent = '';
-    deleteNames.textContent = '';
-    if (event.target.classList.contains('calendar-table__cell_event')) {
-        event.target.classList.remove('calendar-table__cell_event');
+function deleteEvent(targetCell, e, targetDate) {
+    // let deleteTitle = e.target.querySelector('.calendar-table__header');
+    let deleteMembers = e.target.querySelector('.calendar-table__title');
+    // deleteTitle.textContent = '';
+    try {
+        deleteMembers.textContent = '';
+    } catch(e) {
+
+    } 
+    
+    if (e.target.classList.contains('calendar-table__cell_event')) {
+        e.target.classList.remove('calendar-table__cell_event');
     } else {
         targetCell.classList.remove('calendar-table__cell_event');
     }
 
-    let targetDay;
-    
-    if (event.target.classList.contains('calendar-table__cell_event')) {
-        targetDay = event.target.querySelector('.calendar-table__header');
-    } else {
-        targetDay = targetCell.querySelector('.calendar-table__header');
-    }
-    
-    targetDay = targetDay.innerText;
-    let cellNum = +targetDay.replace(/\D/g, '');
-    
-    let targetMonth;
-    
-    if (cellNum < 10) {
-        cellNum = `0${cellNum}`;
-    }
-    
-    if (_calendar_btns__WEBPACK_IMPORTED_MODULE_0__.showedMonth < 9) {
-        targetMonth = `0${_calendar_btns__WEBPACK_IMPORTED_MODULE_0__.showedMonth + 1}`;
-    } else {
-        targetMonth = _calendar_btns__WEBPACK_IMPORTED_MODULE_0__.showedMonth + 1;
-    }
-    let targetDates = `${cellNum}.${targetMonth}.${_calendar_btns__WEBPACK_IMPORTED_MODULE_0__.showedYear}`;
-
     for (let i = 0; i < _local_storage__WEBPACK_IMPORTED_MODULE_1__.localArray.length; i++) {
-        if (_local_storage__WEBPACK_IMPORTED_MODULE_1__.localArray[i].dayDate == targetDates) {
+        if (_local_storage__WEBPACK_IMPORTED_MODULE_1__.localArray[i].dayDate == targetDate) {
+            console.log(_local_storage__WEBPACK_IMPORTED_MODULE_1__.localArray[i].dayDate, targetDate);
             _local_storage__WEBPACK_IMPORTED_MODULE_1__.localArray.splice(i, 1);
         }
         localStorage.setItem('events', JSON.stringify(_local_storage__WEBPACK_IMPORTED_MODULE_1__.localArray));
@@ -537,9 +545,17 @@ function placeModalDayForm(event, modalDayTrigger, modalForm) {
 }
 
 function showEventDate(event, date) {
-    let targetDate = event.target.innerText;
-    let cellNum = +targetDate.replace(/\D/g, '');
-    
+    let targetCell = event.target.closest('.calendar-table__cell_event');
+    let targetDate,
+        cellNum;
+    console.log(targetCell);
+    if (targetCell) {
+        targetDate = targetCell.querySelector('.calendar-table__header').innerText;
+        cellNum = +targetDate.replace(/\D/g, '');
+    } else {
+        cellNum = event.target.innerText.replace(/\D/g, '');
+    }
+
     if (cellNum < 10) {
         cellNum = `0${cellNum}`;
     }
@@ -551,36 +567,23 @@ function showEventDate(event, date) {
     } else {
         targetMonth = _calendar_btns__WEBPACK_IMPORTED_MODULE_0__.showedMonth + 1;
     }
-    if (!event.target.classList.contains('calendar-table__cell_event')) {
+
+    if (targetCell) {
+        date.textContent = `${+cellNum} ${_variables__WEBPACK_IMPORTED_MODULE_2__.monthes[+targetMonth-1]}`;
+    } else {
         date.value = `${cellNum}.${targetMonth}.${_calendar_btns__WEBPACK_IMPORTED_MODULE_0__.showedYear}`;
-    } else {
-        date.textContent = `${cellNum} ${_variables__WEBPACK_IMPORTED_MODULE_2__.monthes[+targetMonth-1]}`;
     }
 }
 
-function showEvent(event , targetCell) {
-    let eventName;
-    if (event.target.classList.contains('calendar-table__cell_event')) {
-        eventName = event.target.querySelector('.calendar-table__title').innerText;
-    } else {
-        eventName = targetCell.querySelector('.calendar-table__title').innerText;
-    }
-
+function showEvent(deleteTitle) {
     let eventModalName = _variables__WEBPACK_IMPORTED_MODULE_2__.modalInfoForm.querySelector('.modal-info__title');
-    eventModalName.textContent = `${eventName}`;
+    eventModalName.textContent = `${deleteTitle}`;
 }
 
-function showPeople(event, targetCell) {
-    let eventPeople;
-    if (event.target.classList.contains('calendar-table__cell_event')) {
-        eventPeople = event.target.querySelector('.calendar-table__descr').innerText;
-    } else {
-        eventPeople = targetCell.querySelector('.calendar-table__descr').innerText;
-    }
-
+function showPeople(deleteNames) {
     let eventModalPeople = _variables__WEBPACK_IMPORTED_MODULE_2__.modalInfoForm.querySelector('.modal-info__people_names');
 
-    eventModalPeople.textContent = `${eventPeople}`;
+    eventModalPeople.textContent = `${deleteNames}`;
 
 } 
 
@@ -615,6 +618,18 @@ function getTriggerCell(element) {
         return;
     }
     
+}
+
+function addDots(str, symbolNumber) {
+    let symbolInStr = str.length,
+        newStr;
+
+    if (symbolInStr > symbolNumber) {
+        newStr = `${str.slice(0, symbolNumber)}...`;
+    } else {
+        newStr = str;
+    }
+    return newStr;
 }
 
 
@@ -690,6 +705,14 @@ function quickModalForm() {
                 dayDescr: ''
             };
 
+            for (let i = 0; i < _local_storage__WEBPACK_IMPORTED_MODULE_3__.localArray.length; i++ ) {
+                if (_local_storage__WEBPACK_IMPORTED_MODULE_3__.localArray[i].dayDate == event.dayDate) {
+                    _local_storage__WEBPACK_IMPORTED_MODULE_3__.localArray.splice(i, 1);
+                    localStorage.setItem('events', JSON.stringify(_local_storage__WEBPACK_IMPORTED_MODULE_3__.localArray));
+                    break;
+                }
+            }
+
             _local_storage__WEBPACK_IMPORTED_MODULE_3__.localArray.push(event);
             localStorage.setItem('events', JSON.stringify(_local_storage__WEBPACK_IMPORTED_MODULE_3__.localArray));
 
@@ -720,9 +743,12 @@ function showEventDay(num, targetDayHeader, targetDay, allCells, targetEvent, ta
         allCells[num].classList.add('calendar-table__cell_event');
         const cellTitle = allCells[num].querySelector('.calendar-table__title'),
             cellName = allCells[num].querySelector('.calendar-table__descr');
+        
+        let newTargetEvent = (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.addDots)(targetEvent, 30),
+            newTargetName = (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.addDots)(targetName, 30);
 
-        cellTitle.textContent = `${targetEvent}`;
-        cellName.textContent = `${targetName}`;
+        cellTitle.textContent = `${newTargetEvent}`;
+        cellName.textContent = `${newTargetName}`;
     }
 
 }
@@ -777,8 +803,7 @@ function showSeacrInput() {
 
 function addClickForInputListEvent(elem) {
     elem.addEventListener('click', () => {
-        let targetName = elem.querySelector('.search-input__event').innerText,
-            targetDate = elem.querySelector('.search-input__date').innerText,
+        let targetDate = elem.querySelector('.search-input__date').innerText,
             realMonthNumber;
         let eventCells = document.querySelectorAll('.calendar-table__cell_event');
         let eventDateArray = JSON.parse(localStorage.getItem(`events`));
@@ -790,7 +815,7 @@ function addClickForInputListEvent(elem) {
         }
 
         eventCells.forEach(elem => {
-            let eventDay = elem.querySelector('.calendar-table__header').innerText;
+            let eventDay = elem.querySelector('.calendar-table__header').innerText.replace(/\D/g, '');
             let eventTitle,
                 eventNames,
                 eventDate,
@@ -798,11 +823,15 @@ function addClickForInputListEvent(elem) {
                 targetCell;
             const inputDate = document.querySelector('[data-dayInputDate]');
 
-            if (targetDate.slice(0, 2) == eventDay.replace(/\D/g, '') &&
+            if(eventDay < 9) {
+                eventDay = `0${eventDay}`;
+            } 
+
+            if (targetDate.slice(0, 2) == eventDay &&
                 _calendar_btns__WEBPACK_IMPORTED_MODULE_2__.showedYear == targetDate.slice(6, 10) &&
                 realMonthNumber == targetDate.slice(3, 5)) {
 
-                showEventInSearchInput(eventDateArray, targetName, targetDate, 
+                showEventInSearchInput(eventDateArray, targetDate, 
                     eventTitle, eventNames, eventDate, descr ,targetCell, elem, inputDate);
             } else if (_calendar_btns__WEBPACK_IMPORTED_MODULE_2__.showedYear !== targetDate.slice(6, 10) && realMonthNumber !== targetDate.slice(3, 5)) {
                 let showTargetYear = +targetDate.slice(6, 10),
@@ -818,10 +847,12 @@ function addClickForInputListEvent(elem) {
 
                 let eventCells = document.querySelectorAll('.calendar-table__cell_event');
                 eventCells.forEach(elem => {
-                    let eventDay = elem.querySelector('.calendar-table__header').innerText;
-
-                    if (targetDate.slice(0, 2) == eventDay.replace(/\D/g, '')) {
-                        showEventInSearchInput(eventDateArray, targetName, targetDate, 
+                    let eventDay = elem.querySelector('.calendar-table__header').innerText.replace(/\D/g, '');
+                    if(eventDay < 9) {
+                        eventDay = `0${eventDay}`;
+                    } 
+                    if (targetDate.slice(0, 2) == eventDay) {
+                        showEventInSearchInput(eventDateArray, targetDate, 
                             eventTitle, eventNames, eventDate, descr ,targetCell, elem, inputDate);
                     }
                 });
@@ -830,31 +861,21 @@ function addClickForInputListEvent(elem) {
     });
 }
 
-function showEventInSearchInput(array, targetName, targetDate, title, members, date, descr ,cell, elem, inputDate) {
+function showEventInSearchInput(array, targetDate, title, members, date, descr ,cell, elem, inputDate) {
     for (let i = 0; i < array.length; i++ ) {
-        if (array[i].dayEvent == targetName && targetDate == array[i].dayDate) {
+        if (targetDate == array[i].dayDate) {
             title = array[i].dayEvent;
             members = array[i].dayName;
             date = array[i].dayDate;
             descr = array[i].dayDescr;
             cell = elem.closest('.calendar-table__cell');
+            break;
         }
     }
 
-    console.log(title, members, date, cell);
-
-    showInfoForm(date, members, title, cell);
+    showInfoForm(date, members, title, cell, targetDate);
     showRefreshForm(elem, cell, targetDate, inputDate);
     placeInfoForm(elem, _variables__WEBPACK_IMPORTED_MODULE_1__.modalInfoForm);
-}
-
-function findTagetCell(eventDays, eventTitle, targetCell, eventName) {
-    eventDays.forEach(e => {
-        if (eventName == eventTitle) {
-            targetCell = e.closest('.calendar-table__cell');
-            return targetCell;
-        }
-    });
 }
 
 function placeInfoForm(elem, form) {
@@ -873,7 +894,7 @@ function placeInfoForm(elem, form) {
     form.style.top = `${targetY}px`;
 }
 
-function showInfoForm(eventDate, eventNames, eventTitle, targetCell) {
+function showInfoForm(eventDate, eventNames, eventTitle, targetCell, targetDate) {
     targetCell.classList.add('calendar-table__cell_active');
     (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalDayForm);
     (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalQuickForm);
@@ -920,12 +941,12 @@ function resetActiveClassCell(triggerCell) {
     triggerCell.classList.remove('calendar-table__cell_active');
 }
 
-function deleteEventBtnInInfoForm(targetCell, eventDate) {
+function deleteEventBtnInInfoForm(targetCell, targetDate) {
     _variables__WEBPACK_IMPORTED_MODULE_1__.deleteEventBtn.addEventListener('click', (e) => {
         e.preventDefault();
         (0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.closeModalForm)(_variables__WEBPACK_IMPORTED_MODULE_1__.modalInfoForm);
         resetActiveClassCell(targetCell);
-        deleteEvent(targetCell, eventDate);
+        deleteEvent(targetCell, targetDate);
     });
 }
 
@@ -968,10 +989,6 @@ function showEventDate(infoDate) {
     let eventDay = +targetDate.slice(0,2),
         eventMonth = +targetDate.slice(3,5),
         eventYear = +targetDate.slice(6);
-   
-    if (eventDay < 10) {
-        eventDay = `0${eventDay}`;
-    }
 
     let targetMonth = _calendar_btns__WEBPACK_IMPORTED_MODULE_2__.showedMonth;
 
@@ -1015,11 +1032,11 @@ function createInputEventList(eventDateArray) {
                 
             let targetDate = eventDate.dayDate,
                 targetEvent = eventDate.dayEvent;
-    
+
             inputItem.classList.add('search-input__item');
             inputItem.innerHTML = `
                 <div class="search-input__descr">
-                    <p class="search-input__event">${targetEvent}</p>
+                    <p class="search-input__event">${(0,_modal_day_form__WEBPACK_IMPORTED_MODULE_0__.addDots)(targetEvent, 15)}</p>
                     <p class="search-input__date">${targetDate}</p>
                 </div>
             `;

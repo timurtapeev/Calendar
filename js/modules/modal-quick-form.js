@@ -1,4 +1,4 @@
-import {closeModalForm, resetActiveClassCell} from './modal-day-form';
+import {closeModalForm, resetActiveClassCell, addDots} from './modal-day-form';
 import {showedYear, showedMonth} from './calendar-btns';
 import {getLastDayOfMonth} from './table';
 import {localArray, getData} from './local-storage';
@@ -51,6 +51,14 @@ function quickModalForm() {
                 dayDescr: ''
             };
 
+            for (let i = 0; i < localArray.length; i++ ) {
+                if (localArray[i].dayDate == event.dayDate) {
+                    localArray.splice(i, 1);
+                    localStorage.setItem('events', JSON.stringify(localArray));
+                    break;
+                }
+            }
+
             localArray.push(event);
             localStorage.setItem('events', JSON.stringify(localArray));
 
@@ -81,9 +89,12 @@ function showEventDay(num, targetDayHeader, targetDay, allCells, targetEvent, ta
         allCells[num].classList.add('calendar-table__cell_event');
         const cellTitle = allCells[num].querySelector('.calendar-table__title'),
             cellName = allCells[num].querySelector('.calendar-table__descr');
+        
+        let newTargetEvent = addDots(targetEvent, 30),
+            newTargetName = addDots(targetName, 30);
 
-        cellTitle.textContent = `${targetEvent}`;
-        cellName.textContent = `${targetName}`;
+        cellTitle.textContent = `${newTargetEvent}`;
+        cellName.textContent = `${newTargetName}`;
     }
 
 }

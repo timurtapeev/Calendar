@@ -1,4 +1,4 @@
-import {closeModalForm} from './modal-day-form';
+import {closeModalForm, addDots} from './modal-day-form';
 import {modalDayForm, modalInfoForm, modalQuickForm, 
         searchInput, searchForm, refreshDeleteEventBtn, monthes, 
         modalInfoCloseBtn, infoDoneBtn, deleteEventBtn, refreshBtn} from './variables';
@@ -31,8 +31,7 @@ function showSeacrInput() {
 
 function addClickForInputListEvent(elem) {
     elem.addEventListener('click', () => {
-        let targetName = elem.querySelector('.search-input__event').innerText,
-            targetDate = elem.querySelector('.search-input__date').innerText,
+        let targetDate = elem.querySelector('.search-input__date').innerText,
             realMonthNumber;
         let eventCells = document.querySelectorAll('.calendar-table__cell_event');
         let eventDateArray = JSON.parse(localStorage.getItem(`events`));
@@ -44,7 +43,7 @@ function addClickForInputListEvent(elem) {
         }
 
         eventCells.forEach(elem => {
-            let eventDay = elem.querySelector('.calendar-table__header').innerText;
+            let eventDay = elem.querySelector('.calendar-table__header').innerText.replace(/\D/g, '');
             let eventTitle,
                 eventNames,
                 eventDate,
@@ -52,11 +51,15 @@ function addClickForInputListEvent(elem) {
                 targetCell;
             const inputDate = document.querySelector('[data-dayInputDate]');
 
-            if (targetDate.slice(0, 2) == eventDay.replace(/\D/g, '') &&
+            if(eventDay < 9) {
+                eventDay = `0${eventDay}`;
+            } 
+
+            if (targetDate.slice(0, 2) == eventDay &&
                 showedYear == targetDate.slice(6, 10) &&
                 realMonthNumber == targetDate.slice(3, 5)) {
 
-                showEventInSearchInput(eventDateArray, targetName, targetDate, 
+                showEventInSearchInput(eventDateArray, targetDate, 
                     eventTitle, eventNames, eventDate, descr ,targetCell, elem, inputDate);
             } else if (showedYear !== targetDate.slice(6, 10) && realMonthNumber !== targetDate.slice(3, 5)) {
                 let showTargetYear = +targetDate.slice(6, 10),
@@ -72,10 +75,12 @@ function addClickForInputListEvent(elem) {
 
                 let eventCells = document.querySelectorAll('.calendar-table__cell_event');
                 eventCells.forEach(elem => {
-                    let eventDay = elem.querySelector('.calendar-table__header').innerText;
-
-                    if (targetDate.slice(0, 2) == eventDay.replace(/\D/g, '')) {
-                        showEventInSearchInput(eventDateArray, targetName, targetDate, 
+                    let eventDay = elem.querySelector('.calendar-table__header').innerText.replace(/\D/g, '');
+                    if(eventDay < 9) {
+                        eventDay = `0${eventDay}`;
+                    } 
+                    if (targetDate.slice(0, 2) == eventDay) {
+                        showEventInSearchInput(eventDateArray, targetDate, 
                             eventTitle, eventNames, eventDate, descr ,targetCell, elem, inputDate);
                     }
                 });
@@ -84,31 +89,21 @@ function addClickForInputListEvent(elem) {
     });
 }
 
-function showEventInSearchInput(array, targetName, targetDate, title, members, date, descr ,cell, elem, inputDate) {
+function showEventInSearchInput(array, targetDate, title, members, date, descr ,cell, elem, inputDate) {
     for (let i = 0; i < array.length; i++ ) {
-        if (array[i].dayEvent == targetName && targetDate == array[i].dayDate) {
+        if (targetDate == array[i].dayDate) {
             title = array[i].dayEvent;
             members = array[i].dayName;
             date = array[i].dayDate;
             descr = array[i].dayDescr;
             cell = elem.closest('.calendar-table__cell');
+            break;
         }
     }
 
-    console.log(title, members, date, cell);
-
-    showInfoForm(date, members, title, cell);
+    showInfoForm(date, members, title, cell, targetDate);
     showRefreshForm(elem, cell, targetDate, inputDate);
     placeInfoForm(elem, modalInfoForm);
-}
-
-function findTagetCell(eventDays, eventTitle, targetCell, eventName) {
-    eventDays.forEach(e => {
-        if (eventName == eventTitle) {
-            targetCell = e.closest('.calendar-table__cell');
-            return targetCell;
-        }
-    });
 }
 
 function placeInfoForm(elem, form) {
@@ -127,7 +122,7 @@ function placeInfoForm(elem, form) {
     form.style.top = `${targetY}px`;
 }
 
-function showInfoForm(eventDate, eventNames, eventTitle, targetCell) {
+function showInfoForm(eventDate, eventNames, eventTitle, targetCell, targetDate) {
     targetCell.classList.add('calendar-table__cell_active');
     closeModalForm(modalDayForm);
     closeModalForm(modalQuickForm);
@@ -174,12 +169,12 @@ function resetActiveClassCell(triggerCell) {
     triggerCell.classList.remove('calendar-table__cell_active');
 }
 
-function deleteEventBtnInInfoForm(targetCell, eventDate) {
+function deleteEventBtnInInfoForm(targetCell, targetDate) {
     deleteEventBtn.addEventListener('click', (e) => {
         e.preventDefault();
         closeModalForm(modalInfoForm);
         resetActiveClassCell(targetCell);
-        deleteEvent(targetCell, eventDate);
+        deleteEvent(targetCell, targetDate);
     });
 }
 
@@ -222,10 +217,6 @@ function showEventDate(infoDate) {
     let eventDay = +targetDate.slice(0,2),
         eventMonth = +targetDate.slice(3,5),
         eventYear = +targetDate.slice(6);
-   
-    if (eventDay < 10) {
-        eventDay = `0${eventDay}`;
-    }
 
     let targetMonth = showedMonth;
 
@@ -269,11 +260,11 @@ function createInputEventList(eventDateArray) {
                 
             let targetDate = eventDate.dayDate,
                 targetEvent = eventDate.dayEvent;
-    
+
             inputItem.classList.add('search-input__item');
             inputItem.innerHTML = `
                 <div class="search-input__descr">
-                    <p class="search-input__event">${targetEvent}</p>
+                    <p class="search-input__event">${addDots(targetEvent, 15)}</p>
                     <p class="search-input__date">${targetDate}</p>
                 </div>
             `;

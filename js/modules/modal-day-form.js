@@ -13,18 +13,44 @@ function showModalDayForm() {
             let targetCell = event.target.closest('.calendar-table__cell');
 
             if (targetCell.classList.contains('calendar-table__cell_event')) {
-                let deleteTitle,
-                    deleteNames;
+                let eventDateArray = JSON.parse(localStorage.getItem(`events`));
+                let eventTitle,
+                    eventNames,
+                    eventDescr,
+                    realMonthNumber,
+                    targetDate,
+                    targetDay;
                 if (event.target.classList.contains('calendar-table__cell_event')) {
-                    deleteTitle = event.target.querySelector('.calendar-table__title');
-                    deleteNames = event.target.querySelector('.calendar-table__descr');
+                    targetDay = event.target.querySelector('.calendar-table__header').innerText.replace(/\D/g, '');
                 } else {
-                    deleteTitle = targetCell.querySelector('.calendar-table__title');
-                    deleteNames = targetCell.querySelector('.calendar-table__descr');
+                    targetDay = targetCell.querySelector('.calendar-table__header').innerText.replace(/\D/g, '');
+                }
+                console.log(targetDay);
+                if(showedMonth < 9) {
+                    realMonthNumber = `0${showedMonth + 1}`;
+                } else {
+                    realMonthNumber = showedMonth + 1;
                 }
 
-                showInfoForm(event, modalDayTrigger, targetCell, deleteTitle, deleteNames);
-                showRefreshForm(event, modalDayTrigger, targetCell, inputDate, deleteTitle, deleteNames);
+                if(targetDay < 10) {
+                    targetDay = `0${targetDay}`;
+                }
+
+                targetDate = `${targetDay}.${realMonthNumber}.${showedYear}`;
+
+                for (let i = 0; i < eventDateArray.length; i++) {
+                    
+                    if (eventDateArray[i].dayDate == targetDate) {
+                        eventTitle = eventDateArray[i].dayEvent;
+                        eventNames = eventDateArray[i].dayName;
+                        eventDescr = eventDateArray[i].dayDescr;
+
+                        break;
+                    }
+                }
+
+                showInfoForm(event, modalDayTrigger, targetCell, eventTitle, eventNames, targetDate);
+                showRefreshForm(event, modalDayTrigger, targetCell, inputDate, targetDate);
             } else {
                 addNewEvent(event, modalDayTrigger, inputDate);
             }
@@ -32,33 +58,33 @@ function showModalDayForm() {
     });
 }
 
-function showInfoForm(event, modalDayTrigger, targetCell, deleteTitle, deleteNames) {
+function showInfoForm(event, modalDayTrigger, targetCell, eventTitle, eventNames, targetDate) {
     placeModalDayForm(event, modalDayTrigger, modalInfoForm);
     closeModalForm(modalDayForm);
     closeModalForm(modalQuickForm);
     closeModalForm(searchForm);
-    showEventDate(event, infoDate);
-    showEvent(event, targetCell);
-    showPeople(event, targetCell);
+    showEventDate(event, infoDate, targetDate);
+    showEvent(eventTitle);
+    showPeople(eventNames);
 
     //infoFormBtns
     
     closeEventBtnInInfoForm(targetCell, event);
-    deleteEventBtnInInfoForm(modalDayTrigger, deleteTitle, deleteNames, targetCell, event);
+    deleteEventBtnInInfoForm(modalDayTrigger, targetCell, event, targetDate);
     doneEventBtnInInfoForm(modalDayTrigger);
 }
 
-function showRefreshForm(event, modalDayTrigger, targetCell, inputDate, deleteTitle, deleteNames) {
+function showRefreshForm(event, modalDayTrigger, targetCell, inputDate, targetDate) {
     refreshBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        let targetDate,
+        let date,
             targetDates;
         placeModalDayForm(event, modalDayTrigger, modalDayForm);
         closeModalForm(modalInfoForm);
         closeModalForm(modalQuickForm);
         closeModalForm(searchForm);
         postData(modalDayForm);
-        showEventDateRefreshBtn(targetDate, targetCell, targetDates, inputDate, event);
+        showEventDateRefreshBtn(date, targetCell, targetDates, inputDate, event);
 
         // refreshEventDeleteBtn
         
@@ -68,7 +94,7 @@ function showRefreshForm(event, modalDayTrigger, targetCell, inputDate, deleteTi
             closeModalForm(modalDayForm);
             closeModalForm(searchForm);
             resetActiveClassCell(modalDayTrigger, e);
-            deleteEvent(deleteTitle, deleteNames, targetCell, event);
+            deleteEvent(modalDayTrigger, targetCell, event, targetDate);
         });
     });
 }
@@ -83,12 +109,12 @@ function addNewEvent(event, modalDayTrigger, inputDate) {
     postData(modalDayForm);
 }
 
-function deleteEventBtnInInfoForm(modalDayTrigger, deleteTitle, deleteNames, targetCell, event) {
+function deleteEventBtnInInfoForm(modalDayTrigger, targetCell, event, targetDate) {
     deleteEventBtn.addEventListener('click', (e) => {
         e.preventDefault();
         closeModalForm(modalInfoForm);
         resetActiveClassCell(modalDayTrigger, e);
-        deleteEvent(deleteTitle, deleteNames, targetCell, event);
+        deleteEvent(targetCell, event, targetDate);
     });
 }
 
@@ -136,41 +162,25 @@ function showEventDateRefreshBtn(targetDate, targetCell, targetDates, inputDate,
     inputDate.value = targetDates;
 }
 
-function deleteEvent(deleteTitle, deleteNames, targetCell, event) {
-    deleteTitle.textContent = '';
-    deleteNames.textContent = '';
-    if (event.target.classList.contains('calendar-table__cell_event')) {
-        event.target.classList.remove('calendar-table__cell_event');
+function deleteEvent(targetCell, e, targetDate) {
+    // let deleteTitle = e.target.querySelector('.calendar-table__header');
+    let deleteMembers = e.target.querySelector('.calendar-table__title');
+    // deleteTitle.textContent = '';
+    try {
+        deleteMembers.textContent = '';
+    } catch(e) {
+
+    } 
+    
+    if (e.target.classList.contains('calendar-table__cell_event')) {
+        e.target.classList.remove('calendar-table__cell_event');
     } else {
         targetCell.classList.remove('calendar-table__cell_event');
     }
 
-    let targetDay;
-    
-    if (event.target.classList.contains('calendar-table__cell_event')) {
-        targetDay = event.target.querySelector('.calendar-table__header');
-    } else {
-        targetDay = targetCell.querySelector('.calendar-table__header');
-    }
-    
-    targetDay = targetDay.innerText;
-    let cellNum = +targetDay.replace(/\D/g, '');
-    
-    let targetMonth;
-    
-    if (cellNum < 10) {
-        cellNum = `0${cellNum}`;
-    }
-    
-    if (showedMonth < 9) {
-        targetMonth = `0${showedMonth + 1}`;
-    } else {
-        targetMonth = showedMonth + 1;
-    }
-    let targetDates = `${cellNum}.${targetMonth}.${showedYear}`;
-
     for (let i = 0; i < localArray.length; i++) {
-        if (localArray[i].dayDate == targetDates) {
+        if (localArray[i].dayDate == targetDate) {
+            console.log(localArray[i].dayDate, targetDate);
             localArray.splice(i, 1);
         }
         localStorage.setItem('events', JSON.stringify(localArray));
@@ -205,9 +215,17 @@ function placeModalDayForm(event, modalDayTrigger, modalForm) {
 }
 
 function showEventDate(event, date) {
-    let targetDate = event.target.innerText;
-    let cellNum = +targetDate.replace(/\D/g, '');
-    
+    let targetCell = event.target.closest('.calendar-table__cell_event');
+    let targetDate,
+        cellNum;
+    console.log(targetCell);
+    if (targetCell) {
+        targetDate = targetCell.querySelector('.calendar-table__header').innerText;
+        cellNum = +targetDate.replace(/\D/g, '');
+    } else {
+        cellNum = event.target.innerText.replace(/\D/g, '');
+    }
+
     if (cellNum < 10) {
         cellNum = `0${cellNum}`;
     }
@@ -219,36 +237,23 @@ function showEventDate(event, date) {
     } else {
         targetMonth = showedMonth + 1;
     }
-    if (!event.target.classList.contains('calendar-table__cell_event')) {
+
+    if (targetCell) {
+        date.textContent = `${+cellNum} ${monthes[+targetMonth-1]}`;
+    } else {
         date.value = `${cellNum}.${targetMonth}.${showedYear}`;
-    } else {
-        date.textContent = `${cellNum} ${monthes[+targetMonth-1]}`;
     }
 }
 
-function showEvent(event , targetCell) {
-    let eventName;
-    if (event.target.classList.contains('calendar-table__cell_event')) {
-        eventName = event.target.querySelector('.calendar-table__title').innerText;
-    } else {
-        eventName = targetCell.querySelector('.calendar-table__title').innerText;
-    }
-
+function showEvent(deleteTitle) {
     let eventModalName = modalInfoForm.querySelector('.modal-info__title');
-    eventModalName.textContent = `${eventName}`;
+    eventModalName.textContent = `${deleteTitle}`;
 }
 
-function showPeople(event, targetCell) {
-    let eventPeople;
-    if (event.target.classList.contains('calendar-table__cell_event')) {
-        eventPeople = event.target.querySelector('.calendar-table__descr').innerText;
-    } else {
-        eventPeople = targetCell.querySelector('.calendar-table__descr').innerText;
-    }
-
+function showPeople(deleteNames) {
     let eventModalPeople = modalInfoForm.querySelector('.modal-info__people_names');
 
-    eventModalPeople.textContent = `${eventPeople}`;
+    eventModalPeople.textContent = `${deleteNames}`;
 
 } 
 
@@ -285,5 +290,17 @@ function getTriggerCell(element) {
     
 }
 
+function addDots(str, symbolNumber) {
+    let symbolInStr = str.length,
+        newStr;
+
+    if (symbolInStr > symbolNumber) {
+        newStr = `${str.slice(0, symbolNumber)}...`;
+    } else {
+        newStr = str;
+    }
+    return newStr;
+}
+
 export {showModalDayForm, closeModalForm, resetActiveClassCell, showInfoForm, showRefreshForm, 
-        addNewEvent, showEventDate, showEvent, showPeople};
+        addNewEvent, showEventDate, addDots};
